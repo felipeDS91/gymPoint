@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useField } from '@rocketseat/unform';
 import isFunction from 'lodash/isFunction';
 import PropTypes from 'prop-types';
@@ -16,8 +17,7 @@ function Input({ name, label, prepend, append, mask, ...rest }) {
         path: 'value',
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldName]);
+  }, [ref.current, fieldName]);
 
   const props = {
     ...rest,
@@ -55,7 +55,7 @@ function Input({ name, label, prepend, append, mask, ...rest }) {
     }
 
     return <InputComponent {...props} />;
-  }, [mask, prepend, append, props, renderAppend]);
+  }, [prepend, append, mask, props]);
 
   return (
     <>

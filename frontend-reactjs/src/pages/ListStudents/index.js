@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FiPlus, FiSearch } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import api from '../../services/api';
 import {
@@ -15,8 +16,6 @@ import {
 } from './styles';
 
 export default function ListStudents() {
-  function handleNewRegister() {}
-
   const [students, setStudents] = useState([]);
 
   async function loadData(search) {
@@ -25,6 +24,19 @@ export default function ListStudents() {
     const { data } = response;
 
     setStudents(data);
+  }
+
+  async function deleteStudent({ id, name }) {
+    const confirm = window.confirm(`Deseja excluir o aluno ${name}?`);
+    if (confirm) {
+      try {
+        await api.delete(`students/${id}`);
+        await loadData();
+        toast.success('Aluno excluído com sucesso!');
+      } catch (error) {
+        toast.error('Não foi possivel excluir o aluno!');
+      }
+    }
   }
 
   useEffect(() => {
@@ -72,7 +84,9 @@ export default function ListStudents() {
                   editar
                 </EditButton>
               </td>
-              <RemoveButton>apagar</RemoveButton>
+              <RemoveButton onClick={() => deleteStudent(student)}>
+                apagar
+              </RemoveButton>
             </tr>
           ))}
         </tbody>
