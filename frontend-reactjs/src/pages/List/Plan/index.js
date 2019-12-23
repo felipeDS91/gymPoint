@@ -3,7 +3,8 @@ import { FiPlus, FiSearch } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import api from '../../services/api';
+import { formatPrice } from '~/util/format';
+import api from '~/services/api';
 import {
   Container,
   TitlePage,
@@ -15,26 +16,32 @@ import {
   RemoveButton,
 } from './styles';
 
-export default function ListStudents() {
-  const [students, setStudents] = useState([]);
+export default function ListPlans() {
+  const [plans, setPlans] = useState([]);
 
   async function loadData(search) {
-    const response = await api.get('/students', { params: { q: search } });
+    const response = await api.get('/plans', { params: { q: search } });
 
     const { data } = response;
 
-    setStudents(data);
+    const dataFormatted = data.map(item => ({
+      ...item,
+      duration: `${item.duration} mês${item.duration > 1 ? 'es' : ''}`,
+      price: formatPrice(item.price),
+    }));
+
+    setPlans(dataFormatted);
   }
 
-  async function deleteStudent({ id, name }) {
-    const confirm = window.confirm(`Deseja excluir o aluno ${name}?`);
+  async function deletePlan({ id, title }) {
+    const confirm = window.confirm(`Deseja excluir o plano ${title}?`);
     if (confirm) {
       try {
-        await api.delete(`students/${id}`);
+        await api.delete(`plans/${id}`);
         await loadData();
-        toast.success('Aluno excluído com sucesso!');
+        toast.success('Plano excluído com sucesso!');
       } catch (error) {
-        toast.error('Não foi possivel excluir o aluno!');
+        toast.error('Não foi possivel excluir o plano!');
       }
     }
   }
@@ -46,9 +53,9 @@ export default function ListStudents() {
   return (
     <Container>
       <PageHeader>
-        <TitlePage>Gerenciando alunos</TitlePage>
+        <TitlePage>Gerenciando planos</TitlePage>
         <Options>
-          <Link to="/form-student">
+          <Link to="/plan">
             <FiPlus size={20} color="#FFF" />
             CADASTRAR
           </Link>
@@ -56,7 +63,7 @@ export default function ListStudents() {
             <FiSearch size={16} color="#999" />
             <input
               type="text"
-              placeholder="Buscar aluno"
+              placeholder="Buscar plano"
               onChange={e => loadData(e.target.value)}
             />
           </SearchInput>
@@ -66,25 +73,23 @@ export default function ListStudents() {
       <TableContent>
         <thead>
           <tr>
-            <th width="350px">NOME</th>
-            <th width="250px">E-MAIL</th>
-            <th width="50px">IDADE</th>
+            <th width="350px">TÍTULO</th>
+            <th width="250px">DURAÇÃO</th>
+            <th width="200px">VALOR p/ MÊS</th>
             <th width="80px" />
             <th width="80px" />
           </tr>
         </thead>
         <tbody>
-          {students.map(student => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>{student.email}</td>
-              <td align="center">{student.age}</td>
+          {plans.map(plan => (
+            <tr key={plan.id}>
+              <td>{plan.title}</td>
+              <td>{plan.duration}</td>
+              <td align="center">{plan.price}</td>
               <td align="center">
-                <EditButton to={`/form-student/${student.id}`}>
-                  editar
-                </EditButton>
+                <EditButton to={`/plan/${plan.id}`}>editar</EditButton>
               </td>
-              <RemoveButton onClick={() => deleteStudent(student)}>
+              <RemoveButton onClick={() => deletePlan(plan)}>
                 apagar
               </RemoveButton>
             </tr>

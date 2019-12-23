@@ -5,7 +5,8 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import Input from '~/components/Input';
 
-import api from '../../services/api';
+import { formatPrice } from '~/util/format';
+import api from '~/services/api';
 import {
   Container,
   TitlePage,
@@ -16,34 +17,37 @@ import {
 } from './styles';
 
 const schema = Yup.object().shape({
-  name: Yup.string().required('O nome é obrigatório'),
-  email: Yup.string()
-    .email('Insira um e-mail válido')
-    .required('O e-mail é obrigatório'),
-  age: Yup.string().required('A idade é obrigatória'),
-  weight: Yup.string().required('O peso é obrigatório'),
-  height: Yup.string().required('A altura é obrigatória'),
+  title: Yup.string().required('O título é obrigatório'),
+  duration: Yup.number()
+    .integer()
+    .required('A duração é obrigatória'),
+  price: Yup.number().required('O valor é obrigatório'),
 });
 
-export default function FormStudent({ history, match }) {
+export default function FormPlan({ history, match }) {
   const { id } = match.params;
   const [editMode] = useState(typeof id !== 'undefined');
-  const [student, setStudent] = useState({});
+  const [plan, setPlan] = useState({});
+  const [totalPrice, setTotalPrice] = useState(null);
 
   async function loadData() {
-    const response = await api.get(`/students/${id}`);
+    const response = await api.get(`/plans/${id}`);
 
     const { data } = response;
 
-    setStudent(data);
+    setPlan(data);
   }
+
+  useEffect(() => {
+    setTotalPrice(formatPrice(plan.duration * plan.price));
+  }, [plan.duration, plan.price]);
 
   /**
    * Fields with property "mask" were not working
    */
   function handleChange(event) {
     event.persist();
-    setStudent(data => ({
+    setPlan(data => ({
       ...data,
       [event.target.name]: event.target.value,
     }));
@@ -51,21 +55,14 @@ export default function FormStudent({ history, match }) {
 
   async function handleSubmit(data) {
     try {
-      const clearData = {
-        ...data,
-        age: data.age,
-        weight: data.weight.replace('kg', ''),
-        height: data.height.replace('m', ''),
-      };
-
       if (editMode) {
-        await api.put(`students/${id}`, clearData);
+        await api.put(`plans/${id}`, data);
       } else {
-        await api.post('students', clearData);
+        await api.post('plans', data);
       }
 
       toast.success('Dados gravados com sucesso!');
-      history.push('/list-students');
+      history.push('/list-plans');
     } catch (error) {
       console.log(error);
       toast.error('Não foi possivel gravar os dados!');
@@ -82,7 +79,7 @@ export default function FormStudent({ history, match }) {
     <Container>
       <PageHeader>
         <TitlePage>
-          {editMode ? 'Edição de aluno' : 'Cadastro de aluno'}
+          {editMode ? 'Edição de plano' : 'Cadastro de plano'}
         </TitlePage>
         <Options>
           <BackButton type="button" onClick={history.goBack}>
@@ -98,16 +95,14 @@ export default function FormStudent({ history, match }) {
 
       <Form
         id="form"
-        initialData={student}
+        initialData={plan}
         schema={schema}
         onSubmit={handleSubmit}
       >
-        <Input name="name" label="NOME COMPLETO" placeholder="Nome complento" />
         <Input
-          name="email"
-          label="ENDEREÇO DE E-MAIL"
-          type="email"
-          placeholder="Seu email completo"
+          name="title"
+          label="TÍTULO DO PLANO"
+          placeholder="Título do plano"
         />
 
         <div>
@@ -115,33 +110,33 @@ export default function FormStudent({ history, match }) {
             <Input
               type="text"
               mask="99"
-              label="IDADE"
-              name="age"
-              value={student.age}
+              label="DURAÇÃO (em meses)"
+              name="duration"
+              value={plan.duration}
               onChange={handleChange}
-              placeholder="Sua idade"
+              placeholder="Duração do plano"
             />
           </div>
           <div>
             <Input
-              type="text"
-              mask="99.9kg"
-              label="PESO(em kg)"
-              name="weight"
-              value={student.weight}
+              type="number"
+              step="any"
+              // type="text"
+              // mask="R$ 0.00"   doesn't work :/
+              label="PREÇO MENSAL"
+              name="price"
+              value={plan.price}
               onChange={handleChange}
-              placeholder="Seu peso"
+              placeholder="Preço mensal do plano"
             />
           </div>
           <div>
             <Input
+              disabled
               type="text"
-              mask="9.99m"
-              label="ALTURA"
-              name="height"
-              value={student.height}
-              onChange={handleChange}
-              placeholder="Sua altura"
+              label="PREÇO TOTAL"
+              name="totalPrice"
+              value={totalPrice}
             />
           </div>
         </div>

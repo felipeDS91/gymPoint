@@ -20,9 +20,9 @@ export default function Header() {
         <nav>
           <img src={logo} alt="GymPoint" />
           <NavLink to="/list-students">ALUNOS</NavLink>
-          <NavLink to="/plans">PLANOS</NavLink>
-          <NavLink to="/registrations">MATRÍCULAS</NavLink>
-          <NavLink to="/help-orders">PEDIDOS DE AUXÍLIO</NavLink>
+          <NavLink to="/list-plans">PLANOS</NavLink>
+          <NavLink to="/list-registrations">MATRÍCULAS</NavLink>
+          <NavLink to="/list-help-orders">PEDIDOS DE AUXÍLIO</NavLink>
         </nav>
 
         <aside>
