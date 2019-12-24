@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack, IoIosCheckmark } from 'react-icons/io';
-import { Form, Select } from '@rocketseat/unform';
-// import Select from '~/components/Select';
+import { format, parseISO } from 'date-fns';
+import { Form, Select, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-import Input from '~/components/Input';
+// import Input from '~/components/Input';
+// import Select from '~/components/Select';
+import DatePicker from '~/components/DatePicker';
 
+import { formatPrice } from '~/util/format';
 import api from '~/services/api';
 import {
   Container,
@@ -14,16 +17,17 @@ import {
   Options,
   BackButton,
   SaveButton,
+  Columns,
 } from './styles';
 
 const schema = Yup.object().shape({
-  name: Yup.string().required('O nome é obrigatório'),
-  email: Yup.string()
-    .email('Insira um e-mail válido')
-    .required('O e-mail é obrigatório'),
-  age: Yup.string().required('A idade é obrigatória'),
-  weight: Yup.string().required('O peso é obrigatório'),
-  height: Yup.string().required('A altura é obrigatória'),
+  student_id: Yup.number()
+    .integer()
+    .required('O aluno é obrigatório'),
+  plan_id: Yup.number()
+    .integer()
+    .required('O plano é obrigatório'),
+  start_date: Yup.date().required('A data é obrigatória'),
 });
 
 export default function FormStudent({ history, match }) {
@@ -32,6 +36,7 @@ export default function FormStudent({ history, match }) {
   const [enrollment, setEnrollment] = useState({});
   const [students, setStudents] = useState([]);
   const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   async function loadStudents() {
     const response = await api.get(`/students`);
@@ -62,11 +67,25 @@ export default function FormStudent({ history, match }) {
     loadPlans();
 
     const response = await api.get(`/enrollments/${id}`);
-    const { data } = response;
 
-    console.log(data);
+    const startDateFormatted = parseISO(response.data.start_date);
+
+    const endDateDateFormatted = format(
+      parseISO(response.data.end_date),
+      "dd'/'MM'/'yyyy"
+    );
+
+    const data = {
+      ...response.data,
+      plan_id: response.data.plan.title,
+      student_id: response.data.student.id,
+      start_date: startDateFormatted,
+      end_date: endDateDateFormatted,
+      priceTotal: formatPrice(response.data.price),
+    };
 
     setEnrollment(data);
+    setLoading(false);
   }
 
   /**
@@ -82,23 +101,17 @@ export default function FormStudent({ history, match }) {
 
   async function handleSubmit(data) {
     console.log(data);
-    return;
     try {
-      const clearData = {
-        ...data,
-      };
-
       if (editMode) {
-        await api.put(`enrollments/${id}`, clearData);
+        await api.put(`enrollments/${id}`, data);
       } else {
-        await api.post('enrollments', clearData);
+        await api.post('enrollments', data);
       }
 
       toast.success('Dados gravados com sucesso!');
       history.push('/list-enrollments');
-    } catch (error) {
-      console.log(error);
-      toast.error('Não foi possivel gravar os dados!');
+    } catch ({ response }) {
+      toast.error(response.data.error || 'Não foi possivel gravar os dados!');
     }
   }
 
@@ -126,60 +139,52 @@ export default function FormStudent({ history, match }) {
         </Options>
       </PageHeader>
 
-      <Form
-        id="form"
-        initialData={enrollment}
-        // schema={schema}
-        onSubmit={handleSubmit}
-      >
-        <Select
-          name="student"
-          label="ALUNO"
-          selected={{ id: 5, title: 'Mariane Pataro' }}
-          placeholder="Buscar aluno"
-          options={students}
-        />
+      {!loading && (
+        <Form
+          id="form"
+          initialData={enrollment}
+          schema={schema}
+          onSubmit={handleSubmit}
+        >
+          <Select
+            name="student_id"
+            label="ALUNO"
+            placeholder="Buscar aluno"
+            options={students}
+          />
 
-        <div>
-          <div>
-            <Select
-              name="plans"
-              label="PLANO"
-              placeholder="Buscar plano"
-              options={plans}
-            />
-          </div>
-          <div>
-            <Input
-              type="text"
-              label="DATA DE INÍCIO"
-              name="date_start"
-              value={enrollment.weight}
-              onChange={handleChange}
-              placeholder="Data de início"
-            />
-          </div>
-          <div>
-            <Input
-              type="text"
-              label="DATA DE TÉRMINO"
-              name="date_end"
-              value={enrollment.height}
-              onChange={handleChange}
-              placeholder="Data de término"
-            />
-          </div>
-          <div>
-            <Input
-              type="text"
-              label="VALOR FINAL"
-              name="finalPrice"
-              value={enrollment.height}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-      </Form>
+          <Columns>
+            <div>
+              <Select
+                name="plan_id"
+                label="PLANO"
+                placeholder="Buscar plano"
+                options={plans}
+              />
+            </div>
+            <div>
+              <DatePicker label="DATA DE INÍCIO" name="start_date" />
+            </div>
+            <div>
+              <Input
+                disabled
+                type="text"
+                label="DATA DE TÉRMINO"
+                name="end_date"
+                placeholder="Data de término"
+              />
+            </div>
+            <div>
+              <Input
+                disabled
+                type="text"
+                label="VALOR FINAL"
+                name="priceTotal"
+              />
+            </div>
+          </Columns>
+        </Form>
+      )}
     </Container>
   );
 }

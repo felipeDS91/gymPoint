@@ -19,7 +19,7 @@ export const Container = styled.div`
       text-align: left;
       margin-bottom: 4px;
       font-weight: bold;
-      margin-top: 12px;
+      margin-top: 12px !important;
     }
 
     input {
@@ -40,7 +40,6 @@ export const Container = styled.div`
       -webkit-appearance: none;
       background-position-y: 5px;
       font-size: 14px;
-      margin: 0 5px;
       cursor: pointer;
 
       option {
@@ -49,21 +48,20 @@ export const Container = styled.div`
         border-radius: 4px;
       }
     }
+  }
+`;
 
-    div {
-      display: flex;
-      flex-direction: row;
-      align-content: space-between;
+export const Columns = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  > div {
+    display: flex;
+    flex-direction: column;
+    width: 33.33%;
 
-      > div {
-        display: flex;
-        flex-direction: column;
-        width: 33.33%;
-
-        & + div {
-          margin-left: 12px;
-        }
-      }
+    & + div {
+      margin-left: 12px;
     }
   }
 `;
