@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { darken } from 'polished';
 
 export const Container = styled.div`
-  max-width: 800px;
+  max-width: 1380px;
   margin: 50px auto;
 `;
 

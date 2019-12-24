@@ -9,8 +9,8 @@ import ListStudents from '~/pages/List/Student';
 import FormStudent from '~/pages/Form/Student';
 import ListPlans from '~/pages/List/Plan';
 import FormPlan from '~/pages/Form/Plan';
-import ListRegistrations from '~/pages/List/Registration';
-import FormRegistration from '~/pages/Form/Registration';
+import ListEnrollments from '~/pages/List/Enrollment';
+import FormEnrollment from '~/pages/Form/Enrollment';
 
 // Remover
 import Profile from '../pages/Profile';
@@ -28,21 +28,12 @@ export default function Routes() {
       <Route path="/plan" exact component={FormPlan} isPrivate />
       <Route path="/plan/:id" exact component={FormPlan} isPrivate />
 
+      <Route path="/list-enrollments" component={ListEnrollments} isPrivate />
+      <Route path="/enrollment" exact component={FormEnrollment} isPrivate />
       <Route
-        path="/list-registrations"
-        component={ListRegistrations}
-        isPrivate
-      />
-      <Route
-        path="/registration"
+        path="/enrollment/:id"
         exact
-        component={FormRegistration}
-        isPrivate
-      />
-      <Route
-        path="/registration/:id"
-        exact
-        component={FormRegistration}
+        component={FormEnrollment}
         isPrivate
       />
 

@@ -27,11 +27,26 @@ export const Container = styled.div`
       border-radius: 4px;
       height: 36px;
       padding: 14px;
+    }
 
-      /* margin-bottom: 12px; */
+    select {
+      border: 1px solid #d6d7da;
+      border-radius: 4px;
+      height: 36px;
+      padding: 8px;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+      background-repeat: no-repeat;
+      background-position-x: 100%;
+      -webkit-appearance: none;
+      background-position-y: 5px;
+      font-size: 14px;
+      margin: 0 5px;
+      cursor: pointer;
 
-      &::placeholder {
-        color: #c4c4c4;
+      option {
+        color: #757575;
+        border: 0;
+        border-radius: 4px;
       }
     }
 
@@ -49,13 +64,6 @@ export const Container = styled.div`
           margin-left: 12px;
         }
       }
-    }
-
-    span {
-      color: #f66f91;
-      align-self: flex-start;
-      margin: 0 0 10px;
-      font-weight: bold;
     }
   }
 `;

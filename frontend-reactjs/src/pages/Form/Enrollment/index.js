@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack, IoIosCheckmark } from 'react-icons/io';
-import { Form } from '@rocketseat/unform';
+import { Form, Select } from '@rocketseat/unform';
+// import Select from '~/components/Select';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import Input from '~/components/Input';
@@ -28,14 +29,44 @@ const schema = Yup.object().shape({
 export default function FormStudent({ history, match }) {
   const { id } = match.params;
   const [editMode] = useState(typeof id !== 'undefined');
-  const [student, setStudent] = useState({});
+  const [enrollment, setEnrollment] = useState({});
+  const [students, setStudents] = useState([]);
+  const [plans, setPlans] = useState([]);
 
-  async function loadData() {
-    const response = await api.get(`/students/${id}`);
-
+  async function loadStudents() {
+    const response = await api.get(`/students`);
     const { data } = response;
 
-    setStudent(data);
+    const dataFormatted = data.map(item => ({
+      id: item.id,
+      title: item.name,
+    }));
+
+    setStudents(dataFormatted);
+  }
+
+  async function loadPlans() {
+    const response = await api.get(`/plans`);
+    const { data } = response;
+
+    const dataFormatted = data.map(item => ({
+      id: item.id,
+      title: item.title,
+    }));
+
+    setPlans(dataFormatted);
+  }
+
+  async function loadData() {
+    loadStudents();
+    loadPlans();
+
+    const response = await api.get(`/enrollments/${id}`);
+    const { data } = response;
+
+    console.log(data);
+
+    setEnrollment(data);
   }
 
   /**
@@ -43,29 +74,28 @@ export default function FormStudent({ history, match }) {
    */
   function handleChange(event) {
     event.persist();
-    setStudent(data => ({
+    setEnrollment(data => ({
       ...data,
       [event.target.name]: event.target.value,
     }));
   }
 
   async function handleSubmit(data) {
+    console.log(data);
+    return;
     try {
       const clearData = {
         ...data,
-        age: data.age,
-        weight: data.weight.replace('kg', ''),
-        height: data.height.replace('m', ''),
       };
 
       if (editMode) {
-        await api.put(`students/${id}`, clearData);
+        await api.put(`enrollments/${id}`, clearData);
       } else {
-        await api.post('students', clearData);
+        await api.post('enrollments', clearData);
       }
 
       toast.success('Dados gravados com sucesso!');
-      history.push('/list-students');
+      history.push('/list-enrollments');
     } catch (error) {
       console.log(error);
       toast.error('Não foi possivel gravar os dados!');
@@ -82,7 +112,7 @@ export default function FormStudent({ history, match }) {
     <Container>
       <PageHeader>
         <TitlePage>
-          {editMode ? 'Edição de aluno' : 'Cadastro de aluno'}
+          {editMode ? 'Edição de matrícula' : 'Cadastro de matrícula'}
         </TitlePage>
         <Options>
           <BackButton type="button" onClick={history.goBack}>
@@ -98,50 +128,54 @@ export default function FormStudent({ history, match }) {
 
       <Form
         id="form"
-        initialData={student}
-        schema={schema}
+        initialData={enrollment}
+        // schema={schema}
         onSubmit={handleSubmit}
       >
-        <Input name="name" label="NOME COMPLETO" placeholder="Nome complento" />
-        <Input
-          name="email"
-          label="ENDEREÇO DE E-MAIL"
-          type="email"
-          placeholder="Seu email completo"
+        <Select
+          name="student"
+          label="ALUNO"
+          selected={{ id: 5, title: 'Mariane Pataro' }}
+          placeholder="Buscar aluno"
+          options={students}
         />
 
         <div>
           <div>
-            <Input
-              type="text"
-              mask="99"
-              label="IDADE"
-              name="age"
-              value={student.age}
-              onChange={handleChange}
-              placeholder="Sua idade"
+            <Select
+              name="plans"
+              label="PLANO"
+              placeholder="Buscar plano"
+              options={plans}
             />
           </div>
           <div>
             <Input
               type="text"
-              mask="99.9kg"
-              label="PESO(em kg)"
-              name="weight"
-              value={student.weight}
+              label="DATA DE INÍCIO"
+              name="date_start"
+              value={enrollment.weight}
               onChange={handleChange}
-              placeholder="Seu peso"
+              placeholder="Data de início"
             />
           </div>
           <div>
             <Input
               type="text"
-              mask="9.99m"
-              label="ALTURA"
-              name="height"
-              value={student.height}
+              label="DATA DE TÉRMINO"
+              name="date_end"
+              value={enrollment.height}
               onChange={handleChange}
-              placeholder="Sua altura"
+              placeholder="Data de término"
+            />
+          </div>
+          <div>
+            <Input
+              type="text"
+              label="VALOR FINAL"
+              name="finalPrice"
+              value={enrollment.height}
+              onChange={handleChange}
             />
           </div>
         </div>
