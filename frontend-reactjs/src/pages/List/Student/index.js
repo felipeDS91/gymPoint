@@ -64,30 +64,32 @@ export default function ListStudents() {
       </PageHeader>
 
       <TableContent>
-        <thead>
-          <tr>
-            <th width="350px">NOME</th>
-            <th width="250px">E-MAIL</th>
-            <th width="50px">IDADE</th>
-            <th width="80px" />
-            <th width="80px" />
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(student => (
-            <tr key={student.id}>
-              <td>{student.name}</td>
-              <td>{student.email}</td>
-              <td align="center">{student.age}</td>
-              <td align="center">
-                <EditButton to={`/student/${student.id}`}>editar</EditButton>
-              </td>
-              <RemoveButton onClick={() => deleteStudent(student)}>
-                apagar
-              </RemoveButton>
+        <table>
+          <thead>
+            <tr>
+              <th width="350px">NOME</th>
+              <th width="250px">E-MAIL</th>
+              <th width="50px">IDADE</th>
+              <th width="80px" />
+              <th width="80px" />
             </tr>
-          ))}
-        </tbody>
+          </thead>
+          <tbody>
+            {students.map(student => (
+              <tr key={student.id}>
+                <td>{student.name}</td>
+                <td>{student.email}</td>
+                <td align="center">{student.age}</td>
+                <td align="center">
+                  <EditButton to={`/student/${student.id}`}>editar</EditButton>
+                </td>
+                <RemoveButton onClick={() => deleteStudent(student)}>
+                  apagar
+                </RemoveButton>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </TableContent>
     </Container>
   );

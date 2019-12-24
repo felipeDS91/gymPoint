@@ -88,19 +88,7 @@ export default function FormStudent({ history, match }) {
     setLoading(false);
   }
 
-  /**
-   * Fields with property "mask" were not working
-   */
-  function handleChange(event) {
-    event.persist();
-    setEnrollment(data => ({
-      ...data,
-      [event.target.name]: event.target.value,
-    }));
-  }
-
   async function handleSubmit(data) {
-    console.log(data);
     try {
       if (editMode) {
         await api.put(`enrollments/${id}`, data);

@@ -71,30 +71,32 @@ export default function ListPlans() {
       </PageHeader>
 
       <TableContent>
-        <thead>
-          <tr>
-            <th width="350px">TÍTULO</th>
-            <th width="250px">DURAÇÃO</th>
-            <th width="200px">VALOR p/ MÊS</th>
-            <th width="80px" />
-            <th width="80px" />
-          </tr>
-        </thead>
-        <tbody>
-          {plans.map(plan => (
-            <tr key={plan.id}>
-              <td>{plan.title}</td>
-              <td>{plan.duration}</td>
-              <td align="center">{plan.price}</td>
-              <td align="center">
-                <EditButton to={`/plan/${plan.id}`}>editar</EditButton>
-              </td>
-              <RemoveButton onClick={() => deletePlan(plan)}>
-                apagar
-              </RemoveButton>
+        <table>
+          <thead>
+            <tr>
+              <th width="350px">TÍTULO</th>
+              <th width="250px">DURAÇÃO</th>
+              <th width="200px">VALOR p/ MÊS</th>
+              <th width="80px" />
+              <th width="80px" />
             </tr>
-          ))}
-        </tbody>
+          </thead>
+          <tbody>
+            {plans.map(plan => (
+              <tr key={plan.id}>
+                <td>{plan.title}</td>
+                <td>{plan.duration}</td>
+                <td align="center">{plan.price}</td>
+                <td align="center">
+                  <EditButton to={`/plan/${plan.id}`}>editar</EditButton>
+                </td>
+                <RemoveButton onClick={() => deletePlan(plan)}>
+                  apagar
+                </RemoveButton>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </TableContent>
     </Container>
   );

@@ -79,47 +79,49 @@ export default function ListEnrollment() {
       </PageHeader>
 
       <TableContent>
-        <thead>
-          <tr>
-            <th width="380px">ALUNO</th>
-            <th width="210px">PLANO</th>
-            <th width="250px" align="center">
-              INÍCIO
-            </th>
-            <th width="250px" align="center">
-              TÉRMINO
-            </th>
-            <th width="100px" align="center">
-              ATIVA
-            </th>
-            <th width="20px" />
-            <th width="20px" />
-          </tr>
-        </thead>
-        <tbody>
-          {enrollments.map(enrollment => (
-            <tr key={enrollment.id}>
-              <td>{enrollment.student.name}</td>
-              <td>{enrollment.plan.title}</td>
-              <td align="center">{enrollment.start_date}</td>
-              <td align="center">{enrollment.end_date}</td>
-              <td align="center">
-                <MdCheckCircle
-                  size={16}
-                  color={enrollment.active ? '#42cb59' : '#dddddd'}
-                />
-              </td>
-              <td align="center">
-                <EditButton to={`/enrollment/${enrollment.id}`}>
-                  editar
-                </EditButton>
-              </td>
-              <RemoveButton onClick={() => deleteEnrollment(enrollment)}>
-                apagar
-              </RemoveButton>
+        <table>
+          <thead>
+            <tr>
+              <th width="380px">ALUNO</th>
+              <th width="210px">PLANO</th>
+              <th width="250px" align="center">
+                INÍCIO
+              </th>
+              <th width="250px" align="center">
+                TÉRMINO
+              </th>
+              <th width="100px" align="center">
+                ATIVA
+              </th>
+              <th width="20px" />
+              <th width="20px" />
             </tr>
-          ))}
-        </tbody>
+          </thead>
+          <tbody>
+            {enrollments.map(enrollment => (
+              <tr key={enrollment.id}>
+                <td>{enrollment.student.name}</td>
+                <td>{enrollment.plan.title}</td>
+                <td align="center">{enrollment.start_date}</td>
+                <td align="center">{enrollment.end_date}</td>
+                <td align="center">
+                  <MdCheckCircle
+                    size={16}
+                    color={enrollment.active ? '#42cb59' : '#dddddd'}
+                  />
+                </td>
+                <td align="center">
+                  <EditButton to={`/enrollment/${enrollment.id}`}>
+                    editar
+                  </EditButton>
+                </td>
+                <RemoveButton onClick={() => deleteEnrollment(enrollment)}>
+                  apagar
+                </RemoveButton>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </TableContent>
     </Container>
   );

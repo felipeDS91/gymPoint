@@ -48,6 +48,13 @@ export const Container = styled.div`
         border-radius: 4px;
       }
     }
+
+    span {
+      color: #f66f91;
+      align-self: flex-start;
+      margin: 0 0 10px;
+      font-weight: bold;
+    }
   }
 `;
 

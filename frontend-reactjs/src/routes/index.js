@@ -11,6 +11,7 @@ import ListPlans from '~/pages/List/Plan';
 import FormPlan from '~/pages/Form/Plan';
 import ListEnrollments from '~/pages/List/Enrollment';
 import FormEnrollment from '~/pages/Form/Enrollment';
+import ListHelpOrdes from '~/pages/List/HelpOrder';
 
 // Remover
 import Profile from '../pages/Profile';
@@ -36,6 +37,8 @@ export default function Routes() {
         component={FormEnrollment}
         isPrivate
       />
+
+      <Route path="/list-help-orders" component={ListHelpOrdes} isPrivate />
 
       <Route path="/profile" component={Profile} isPrivate />
     </Switch>
