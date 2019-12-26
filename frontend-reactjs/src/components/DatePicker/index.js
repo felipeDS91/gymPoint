@@ -5,7 +5,7 @@ import { useField } from '@rocketseat/unform';
 
 import CustomDate from '../CustomDate';
 
-export default function DatePicker({ name, label }) {
+export default function DatePicker({ name, label, onChange }) {
   const ref = useRef(null);
   const { fieldName, registerField, defaultValue, error } = useField(name);
   const [selected, setSelected] = useState(defaultValue);
@@ -30,7 +30,10 @@ export default function DatePicker({ name, label }) {
         customInput={<CustomDate label="DATA DE INÍCIO" />}
         name={fieldName}
         selected={selected}
-        onChange={date => setSelected(date)}
+        onChange={date => {
+          onChange(date);
+          setSelected(date);
+        }}
         ref={ref}
       />
       {error && <span>{error}</span>}

@@ -3,6 +3,25 @@ import Select from 'react-select';
 
 import { useField } from '@rocketseat/unform';
 
+function customStyle(additionalStyle) {
+  return {
+    control: provided => ({
+      ...provided,
+      height: 36,
+      fontSize: '15px',
+      color: 'red',
+      cursor: 'pointer',
+      ...additionalStyle,
+    }),
+    input: provided => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      height: 30,
+    }),
+  };
+}
+
 export default function ReactSelect({
   name,
   label,
@@ -14,7 +33,7 @@ export default function ReactSelect({
   const { fieldName, registerField, defaultValue, error } = useField(name);
 
   function parseSelectValue(selectRef) {
-    const selectValue = selectRef.state.value
+    const selectValue = selectRef.state.value;
     if (!multiple) {
       return selectValue ? selectValue.id : '';
     }
@@ -57,6 +76,7 @@ export default function ReactSelect({
         ref={ref}
         getOptionValue={option => option.id}
         getOptionLabel={option => option.title}
+        styles={customStyle()}
         {...rest}
       />
 

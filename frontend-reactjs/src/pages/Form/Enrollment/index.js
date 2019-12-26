@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack, IoIosCheckmark } from 'react-icons/io';
-import { format, parseISO } from 'date-fns';
-import { Form, Select, Input } from '@rocketseat/unform';
+import { format, parseISO, addMonths } from 'date-fns';
+import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-// import Input from '~/components/Input';
-// import Select from '~/components/Select';
+import Select from '~/components/Select';
 import DatePicker from '~/components/DatePicker';
 
 import { formatPrice } from '~/util/format';
@@ -21,12 +20,8 @@ import {
 } from './styles';
 
 const schema = Yup.object().shape({
-  student_id: Yup.number()
-    .integer()
-    .required('O aluno é obrigatório'),
-  plan_id: Yup.number()
-    .integer()
-    .required('O plano é obrigatório'),
+  student_id: Yup.string().required('O aluno é obrigatório'),
+  plan_id: Yup.string().required('O plano é obrigatório'),
   start_date: Yup.date().required('A data é obrigatória'),
 });
 
@@ -57,14 +52,21 @@ export default function FormStudent({ history, match }) {
     const dataFormatted = data.map(item => ({
       id: item.id,
       title: item.title,
+      price_total: formatPrice(item.duration * item.price),
+      duration: item.duration,
     }));
 
     setPlans(dataFormatted);
   }
 
   async function loadData() {
-    loadStudents();
-    loadPlans();
+    await loadStudents();
+    await loadPlans();
+
+    if (!editMode) {
+      setLoading(false);
+      return;
+    }
 
     const response = await api.get(`/enrollments/${id}`);
 
@@ -77,11 +79,11 @@ export default function FormStudent({ history, match }) {
 
     const data = {
       ...response.data,
-      plan_id: response.data.plan.title,
+      plan_id: response.data.plan.id,
       student_id: response.data.student.id,
       start_date: startDateFormatted,
       end_date: endDateDateFormatted,
-      priceTotal: formatPrice(response.data.price),
+      price_total: formatPrice(response.data.price),
     };
 
     setEnrollment(data);
@@ -108,6 +110,23 @@ export default function FormStudent({ history, match }) {
 
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (enrollment.plan_id) {
+      const plan = plans.find(item => item.id === enrollment.plan_id);
+      setEnrollment({
+        ...enrollment,
+        ...(enrollment.start_date && {
+          end_date: format(
+            addMonths(enrollment.start_date, plan.duration),
+            "dd'/'MM'/'yyyy"
+          ),
+        }),
+        price_total: plan.price_total,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enrollment.plan_id, enrollment.start_date]);
 
   return (
     <Container>
@@ -148,10 +167,25 @@ export default function FormStudent({ history, match }) {
                 label="PLANO"
                 placeholder="Buscar plano"
                 options={plans}
+                onChange={e => {
+                  setEnrollment({
+                    ...enrollment,
+                    plan_id: e.id,
+                  });
+                }}
               />
             </div>
             <div>
-              <DatePicker label="DATA DE INÍCIO" name="start_date" />
+              <DatePicker
+                label="DATA DE INÍCIO"
+                name="start_date"
+                onChange={date => {
+                  setEnrollment({
+                    ...enrollment,
+                    start_date: date,
+                  });
+                }}
+              />
             </div>
             <div>
               <Input
@@ -167,7 +201,7 @@ export default function FormStudent({ history, match }) {
                 disabled
                 type="text"
                 label="VALOR FINAL"
-                name="priceTotal"
+                name="price_total"
               />
             </div>
           </Columns>

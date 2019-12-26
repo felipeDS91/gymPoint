@@ -29,7 +29,7 @@ export const Container = styled.div`
       padding: 14px;
     }
 
-    select {
+    /* select {
       border: 1px solid #d6d7da;
       border-radius: 4px;
       height: 36px;
@@ -47,7 +47,7 @@ export const Container = styled.div`
         border: 0;
         border-radius: 4px;
       }
-    }
+    } */
 
     span {
       color: #f66f91;
