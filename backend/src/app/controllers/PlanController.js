@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Plan from '../models/Plan';
 
 const schema = Yup.object().shape({
@@ -9,9 +10,10 @@ const schema = Yup.object().shape({
 
 class PlanController {
   async index(req, res) {
-    const { page = 1 } = req.query;
+    const { page = 1, q } = req.query;
 
     const plans = await Plan.findAll({
+      where: q && { title: { [Op.iLike]: `%${q}%` } },
       order: ['id'],
       limit: 20,
       offset: (page - 1) * 20,

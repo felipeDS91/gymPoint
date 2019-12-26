@@ -26,6 +26,13 @@ class StudentController {
     return res.json(students);
   }
 
+  async show(req, res) {
+    const student = await Student.findOne({
+      where: { id: req.params.id },
+    });
+    return res.json(student);
+  }
+
   async store(req, res) {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json('Validation fails.');
@@ -72,6 +79,14 @@ class StudentController {
       name,
       email,
     });
+  }
+
+  async delete(req, res) {
+    Student.destroy({
+      where: { id: req.params.id },
+    });
+
+    return res.json();
   }
 }
 

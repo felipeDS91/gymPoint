@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import { parseISO, isBefore, addMonths, format } from 'date-fns';
+import { Op } from 'sequelize';
 import Enrollment from '../models/Enrollment';
 import Plan from '../models/Plan';
 import Student from '../models/Student';
@@ -8,7 +9,7 @@ import Queue from '../../lib/Queue';
 
 class EnrollmentController {
   async index(req, res) {
-    const { page = 1 } = req.query;
+    const { page = 1, q } = req.query;
 
     const enrollments = await Enrollment.findAll({
       order: ['id'],
@@ -19,12 +20,13 @@ class EnrollmentController {
         {
           model: Student,
           as: 'student',
-          attributes: ['name', 'age', 'email'],
+          attributes: ['id', 'name', 'age', 'email'],
+          where: q && { name: { [Op.iLike]: `%${q}%` } },
         },
         {
           model: Plan,
           as: 'plan',
-          attributes: ['title', 'price'],
+          attributes: ['id', 'title', 'price'],
         },
       ],
     });
@@ -40,13 +42,13 @@ class EnrollmentController {
         {
           model: Student,
           as: 'student',
-          attributes: ['name'],
+          attributes: ['id', 'name'],
         },
 
         {
           model: Plan,
           as: 'plan',
-          attributes: ['title', 'price'],
+          attributes: ['id', 'title', 'price'],
         },
       ],
     });

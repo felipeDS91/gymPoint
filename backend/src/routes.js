@@ -24,7 +24,11 @@ routes.get('/users', UserController.index);
 
 routes.post('/students', StudentController.store);
 routes.get('/students', StudentController.index);
-routes.put('/students/:id', StudentController.update);
+routes
+  .route('/students/:id', adminOnly)
+  .get(StudentController.show)
+  .put(StudentController.update)
+  .delete(StudentController.delete);
 
 routes.get('/plans', adminOnly, PlanController.index);
 routes.post('/plans', adminOnly, PlanController.store);
@@ -47,6 +51,7 @@ routes
   .get(CheckinController.index)
   .post(CheckinController.store);
 
+routes.get('/help-orders', adminOnly, HelpOrderController.index);
 routes
   .route('/students/:student_id/help-orders')
   .get(HelpOrderController.show)

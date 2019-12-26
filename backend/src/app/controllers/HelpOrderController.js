@@ -1,10 +1,24 @@
 import * as Yup from 'yup';
 import HelpOrder from '../models/HelpOrder';
+import Student from '../models/Student';
 
 class HelpOrderController {
   async index(req, res) {
-    const helpOrders = HelpOrder.findAll({
+    const { page = 1, q } = req.query;
+
+    const helpOrders = await HelpOrder.findAll({
+      order: ['id'],
+      limit: 20,
+      offset: (page - 1) * 20,
       where: { answer_at: null },
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['id', 'name'],
+          where: q && { name: { [Op.iLike]: `%${q}%` } },
+        },
+      ],
     });
 
     return res.json(helpOrders);
@@ -21,9 +35,9 @@ class HelpOrderController {
 
     const { student_id } = req.params;
 
-    const checkins = await HelpOrder.findAll({ student_id });
+    const helpOrder = await HelpOrder.findAll({ where: { student_id } });
 
-    return res.json(checkins);
+    return res.json(helpOrder);
   }
 
   async store(req, res) {
