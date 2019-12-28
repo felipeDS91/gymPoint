@@ -8,6 +8,7 @@ import EnrollmentController from './app/controllers/EnrollmentController';
 import CheckinController from './app/controllers/CheckinController';
 import HelpOrderController from './app/controllers/HelpOrderController';
 import AnswerController from './app/controllers/AnswerController';
+import SessionStudentController from './app/controllers/SessionStudentController';
 
 import authMiddleware from './app/middlewares/auth';
 import adminOnly from './app/middlewares/adminOnly';
@@ -15,6 +16,7 @@ import adminOnly from './app/middlewares/adminOnly';
 const routes = new Router();
 
 routes.post('/sessions', SessionController.store);
+routes.post('/sessions-student', SessionStudentController.store);
 
 routes.use(authMiddleware);
 

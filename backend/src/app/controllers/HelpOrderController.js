@@ -34,8 +34,14 @@ class HelpOrderController {
     }
 
     const { student_id } = req.params;
+    const { page = 1, q } = req.query;
 
-    const helpOrder = await HelpOrder.findAll({ where: { student_id } });
+    const helpOrder = await HelpOrder.findAll({
+      order: ['id'],
+      limit: 20,
+      offset: (page - 1) * 20,
+      where: { student_id },
+    });
 
     return res.json(helpOrder);
   }
