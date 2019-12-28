@@ -27,7 +27,6 @@ export function* signIn({ payload }) {
 
     history.push('/list-students');
   } catch (err) {
-    console.log(err);
     toast.error('Falha na autenticação, verifique seus dados');
     yield put(signFailure());
   }

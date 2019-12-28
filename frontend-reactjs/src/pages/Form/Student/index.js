@@ -28,7 +28,13 @@ const schema = Yup.object().shape({
 export default function FormStudent({ history, match }) {
   const { id } = match.params;
   const [editMode] = useState(typeof id !== 'undefined');
-  const [student, setStudent] = useState({});
+  const [student, setStudent] = useState({
+    name: '',
+    email: '',
+    age: '',
+    weight: 0,
+    height: 0,
+  });
 
   async function loadData() {
     const response = await api.get(`/students/${id}`);
@@ -67,7 +73,6 @@ export default function FormStudent({ history, match }) {
       toast.success('Dados gravados com sucesso!');
       history.push('/list-students');
     } catch (error) {
-      console.log(error);
       toast.error('Não foi possivel gravar os dados!');
     }
   }

@@ -63,8 +63,7 @@ export default function FormPlan({ history, match }) {
 
       toast.success('Dados gravados com sucesso!');
       history.push('/list-plans');
-    } catch (error) {
-      console.log(error);
+    } catch (error) {      
       toast.error('Não foi possivel gravar os dados!');
     }
   }
