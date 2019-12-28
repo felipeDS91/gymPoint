@@ -8,10 +8,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import LogoTitle from '~/components/LogoTitle';
 import SignIn from './pages/SignIn';
 
-import SelectProvider from './pages/New/SelectProvider';
-import SelectDateTime from './pages/New/SelectDateTime';
-import Confirm from './pages/New/Confirm';
 import HelpOrder from './pages/HelpOrder';
+import NewHelpOrder from './pages/NewHelpOrder';
+import Answer from './pages/Answer';
 
 import CheckIn from './pages/CheckIn';
 
@@ -46,6 +45,8 @@ export default (signedIn = false) =>
               screen: createStackNavigator(
                 {
                   HelpOrder,
+                  NewHelpOrder,
+                  Answer,
                 },
                 {
                   defaultNavigationOptions: ({ navigation }) => {
@@ -60,49 +61,20 @@ export default (signedIn = false) =>
                 }
               ),
             },
-
-            //   Help: {
-            //     screen: createStackNavigator(
-            //       {
-            //         Anwser,
-            //         NewOrder,
-            //       },
-            //       {
-            //         defaultNavigationOptions: {
-            //           headerTransparent: true,
-            //           headerTintColor: '#FFF',
-            //           headerLeftContainerStyle: {
-            //             marginLeft: 20,
-            //           },
-            //         },
-            //       }
-            //     ),
-            //     navigationOptions: {
-            //       tabBarVisible: false,
-            //       tabBarLabel: 'Agendar',
-            //       tabBarIcon: (
-            //         <Icon
-            //           name="add-circle-outline"
-            //           size={20}
-            //           color="rgba(255, 255, 255, 0.6)"
-            //         />
-            //       ),
-            //     },
-            //   },
+          },
+          {
+            resetOnBlur: true,
+            tabBarOptions: {
+              keyboardHidesTabBar: true,
+              activeTintColor: '#ee4e62',
+              style: {
+                backgroundColor: '#FFF',
+              },
+            },
           }
-          // {
-          //   resetOnBlur: true,
-          //   tabBarOptions: {
-          //     keyboardHidesTabBar: true,
-          //     activeTintColor: '#ee4e62',
-          //     inactiveTintColor: 'rgba(255, 255, 255, 0.6)',
-          //     style: {
-          //       backgroundColor: '#FFF',
-          //     },
-          //   },
-          // }
         ),
       },
+
       {
         initialRouteName: signedIn ? 'App' : 'Sign',
       }

@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import Button from '~/components/Button';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
@@ -7,33 +6,28 @@ export const Container = styled.SafeAreaView`
   background: #f2f2f2;
 `;
 
-export const NewHelpOrderButton = styled(Button)`
-  background: #ee4e62;
-  margin-bottom: 10px;
-  height: 45px;
-`;
-
-export const List = styled.FlatList.attrs({
-  showsVerticalScrollIndicator: false,
-})``;
-
-export const ListContent = styled.TouchableOpacity`
-  height: 150px;
+export const Card = styled.View`
   padding: 20px;
+  justify-content: space-between;
   border: 1px solid #d6d7da;
   border-radius: 4px;
   background: #fff;
   align-items: center;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 10px;
 `;
 
-export const ListHeader = styled.View`
+export const ContentHeader = styled.View`
   width: 100%;
-  align-items: center;
-  flex-direction: row;
   justify-content: space-between;
+  flex-direction: row;
+  background: #fff;
   margin-bottom: 10px;
+`;
+
+export const Title = styled.Text`
+  font-weight: bold;
+  font-size: 14px;
+  color: #444444;
 `;
 
 export const DateLabel = styled.Text`
@@ -41,12 +35,11 @@ export const DateLabel = styled.Text`
   color: #666666;
 `;
 
-export const Question = styled.Text.attrs({
-  numberOfLines: 3,
-})`
+export const Content = styled.Text`
   font-size: 14px;
   text-align: left;
   align-self: flex-start;
   color: #666666;
   line-height: 26px;
+  margin-bottom: 10px;
 `;

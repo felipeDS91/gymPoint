@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { withNavigationFocus } from 'react-navigation';
+import { showMessage } from 'react-native-flash-message';
 import api from '~/services/api';
 
 import {
@@ -14,7 +15,7 @@ import {
   CheckInTime,
 } from './styles';
 
-function CheckIn({ isFocused }) {
+export default function CheckIn() {
   const [checkins, setCheckins] = useState([]);
   const { id } = useSelector(state => state.user);
 
@@ -32,18 +33,28 @@ function CheckIn({ isFocused }) {
   }
 
   useEffect(() => {
-    if (isFocused) {
-      loadCheckIns();
-    }
+    loadCheckIns();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFocused]);
+  }, []);
 
   async function handleCheckIn() {
-    // const response = await api.post(`/students/${id}/checkins`);
-    await api.post(`/students/${id}/checkins`);
+    try {
+      await api.post(`/students/${id}/checkins`);
+    } catch ({ response }) {
+      showMessage({
+        message: response.data.error || 'Não foi possivel realizar check-in!',
+        type: 'danger',
+      });
+      return;
+    }
+
+    showMessage({
+      message: 'Check-in realizado com sucesso!',
+      type: 'success',
+    });
 
     loadCheckIns();
-    // colocar um toast
   }
 
   return (
@@ -62,5 +73,3 @@ function CheckIn({ isFocused }) {
     </Container>
   );
 }
-
-export default withNavigationFocus(CheckIn);

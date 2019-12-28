@@ -27,6 +27,8 @@ export default function SignIn() {
           autoCorrect={false}
           autoCapitalize="none"
           placeholder="Informe seu ID de cadastro"
+          keyboardType="numeric"
+          returnKeyType="next"
           value={id}
           onChangeText={setId}
         />

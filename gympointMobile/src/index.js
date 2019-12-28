@@ -2,6 +2,7 @@ import React from 'react';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import { StatusBar } from 'react-native';
+import FlashMessage from 'react-native-flash-message';
 
 import './config/ReactotronConfig';
 
@@ -15,6 +16,7 @@ export default function Index() {
         <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         <App />
       </PersistGate>
+      <FlashMessage position="top" />
     </Provider>
   );
 }

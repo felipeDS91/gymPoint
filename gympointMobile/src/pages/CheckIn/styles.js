@@ -9,12 +9,10 @@ export const Container = styled.SafeAreaView`
 
 export const List = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
-  // contentContainerStyle: { padding: 30 },
 })``;
 
 export const CheckInButton = styled(Button)`
   background: #ee4e62;
-  margin-top: 5px;
   margin-bottom: 10px;
   height: 45px;
 `;

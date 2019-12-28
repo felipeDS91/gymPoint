@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { withNavigationFocus } from 'react-navigation';
 import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
@@ -11,13 +12,12 @@ import {
   List,
   ListContent,
   ListHeader,
-  Status,
   DateLabel,
   Question,
 } from './styles';
 import api from '~/services/api';
 
-export default function HelpOrder() {
+function HelpOrder({ navigation, isFocused }) {
   const [question, setQuestions] = useState([]);
   const { id } = useSelector(state => state.user);
 
@@ -37,18 +37,22 @@ export default function HelpOrder() {
   useEffect(() => {
     loadCheckIns();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line
+  }, [isFocused]);
 
   return (
     <Container>
-      <NewHelpOrderButton>Novo pedido de auxílio</NewHelpOrderButton>
+      <NewHelpOrderButton onPress={() => navigation.navigate('NewHelpOrder')}>
+        Novo pedido de auxílio
+      </NewHelpOrderButton>
 
       <List
         data={question}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => (
-          <ListContent>
+          <ListContent
+            onPress={() => navigation.navigate('Answer', { question: item })}
+          >
             <ListHeader>
               <AnwserStatus anwsered={item.answer_at} />
               <DateLabel>{item.createdAt}</DateLabel>
@@ -60,3 +64,5 @@ export default function HelpOrder() {
     </Container>
   );
 }
+
+export default withNavigationFocus(HelpOrder);
