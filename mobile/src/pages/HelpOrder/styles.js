@@ -19,7 +19,7 @@ export const List = styled.FlatList.attrs({
 
 export const ListContent = styled.TouchableOpacity`
   height: 150px;
-  padding: 20px;
+  padding: 15px;
   border: 1px solid #d6d7da;
   border-radius: 4px;
   background: #fff;

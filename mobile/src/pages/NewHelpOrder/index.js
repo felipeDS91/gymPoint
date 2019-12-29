@@ -33,8 +33,6 @@ export default function NewHelpOrder({ navigation }) {
         placeholder="Inclua seu pedido de auxílio"
         value={question}
         onChangeText={setQuestion}
-        returnKeyType="send"
-        onSubmitEditing={handleSubmit}
       />
 
       <SendButtom onPress={handleSubmit}>Enviar pedido</SendButtom>

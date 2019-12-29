@@ -28,7 +28,8 @@ export default function SignIn() {
           autoCapitalize="none"
           placeholder="Informe seu ID de cadastro"
           keyboardType="numeric"
-          returnKeyType="next"
+          returnKeyType="send"
+          onSubmitEditing={handleSubmit}
           value={id}
           onChangeText={setId}
         />

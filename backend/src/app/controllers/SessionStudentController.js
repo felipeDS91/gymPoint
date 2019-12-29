@@ -21,7 +21,7 @@ class SessionController {
     const student = await Student.findByPk(id);
 
     if (!student) {
-      return res.status(401).json({ error: 'User not found' });
+      return res.status(401).json({ error: 'Usuário não localizado' });
     }
 
     return res.json({
