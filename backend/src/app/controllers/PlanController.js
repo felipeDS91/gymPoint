@@ -38,8 +38,7 @@ class PlanController {
       where: { title: req.body.title },
     });
 
-    if (planExists)
-      return res.status(400).json({ error: 'Plan already exists.' });
+    if (planExists) return res.status(400).json({ error: 'Plano já existe' });
 
     const { id, title } = await Plan.create(req.body);
 
@@ -61,8 +60,7 @@ class PlanController {
     if (title !== plan.title) {
       const planExists = await Plan.findOne({ where: { title } });
 
-      if (planExists)
-        return res.status(400).json({ error: 'Plan already exists.' });
+      if (planExists) return res.status(400).json({ error: 'Plano já existe' });
     }
 
     const { id } = await plan.update(req.body);

@@ -11,7 +11,7 @@ class AnswerController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation Fails' });
+      return res.status(400).json({ error: 'Erro de validação' });
     }
 
     const { id } = req.params;
@@ -21,11 +21,13 @@ class AnswerController {
     });
 
     if (!helpOrder) {
-      return res.status(400).json({ error: 'Help order does not exist' });
+      return res.status(400).json({ error: 'Pedido de ajuda não existe' });
     }
 
     if (helpOrder.answer_at) {
-      return res.status(400).json({ error: 'Help order already answered' });
+      return res
+        .status(400)
+        .json({ error: 'Pedido de ajuda já foi respondido' });
     }
 
     const student = await Student.findByPk(helpOrder.student_id, {
@@ -33,7 +35,7 @@ class AnswerController {
     });
 
     if (!student) {
-      return res.status(400).json({ error: 'Student not found' });
+      return res.status(400).json({ error: 'Aluno não encontrado' });
     }
 
     const { answer } = req.body;

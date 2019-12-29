@@ -45,7 +45,7 @@ class CheckinController {
 
     if (checkinCount >= CHECKINS_PER_WEEK) {
       return res.status(400).json({
-        error: `User already done ${CHECKINS_PER_WEEK} checkins these week.`,
+        error: `Usuário já realizou o máximo de ${CHECKINS_PER_WEEK} checkins permitidos nessa semana.`,
       });
     }
 

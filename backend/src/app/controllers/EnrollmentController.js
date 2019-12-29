@@ -73,7 +73,7 @@ class EnrollmentController {
     });
 
     if (!checkStudent) {
-      return res.status(401).json({ error: "Student doesn't has a valid id" });
+      return res.status(401).json({ error: 'Aluno não possui uma id válida' });
     }
 
     const startDate = parseISO(req.body.start_date);
@@ -81,7 +81,7 @@ class EnrollmentController {
     /* verify if dates is before (valid)  */
     if (isBefore(startDate, new Date())) {
       return res.status(400).json({
-        error: 'past dates are not permitted',
+        error: 'Data no passado não são permitidas',
       });
     }
 
@@ -94,7 +94,9 @@ class EnrollmentController {
     });
 
     if (checkEnrollment) {
-      return res.status(401).json({ error: 'Enrollment is not available' });
+      return res
+        .status(401)
+        .json({ error: 'Matricula não se encontra disponível' });
     }
 
     const plan = await Plan.findOne({
@@ -103,7 +105,7 @@ class EnrollmentController {
     });
 
     if (!plan) {
-      return res.status(401).json({ error: "Plan doesn't exist" });
+      return res.status(401).json({ error: 'Plano não existe' });
     }
 
     /* Calculate value of price */
@@ -181,7 +183,7 @@ class EnrollmentController {
     if (checkEnrollment) {
       return res
         .status(401)
-        .json({ error: 'Student already done this enrollment' });
+        .json({ error: 'Aluno já se encontra matriculado' });
     }
 
     const planExists = await Plan.findOne({
@@ -190,9 +192,7 @@ class EnrollmentController {
     });
 
     if (!planExists) {
-      return res
-        .status(401)
-        .json({ error: 'Plans does not exist, please careful' });
+      return res.status(401).json({ error: 'Plano não existe' });
     }
 
     /* Verify if enrollment exists  */
@@ -201,7 +201,7 @@ class EnrollmentController {
     });
 
     if (!enrollmentUpdate) {
-      return res.status(400).json({ error: 'Enrollment not find' });
+      return res.status(400).json({ error: 'Matricula não existe' });
     }
 
     /* Calculate value of price */
@@ -226,14 +226,14 @@ class EnrollmentController {
     });
 
     if (!enrollmentDelete) {
-      return res.status(400).json({ error: 'Enrollment not exists' });
+      return res.status(400).json({ error: 'Matricula não existe' });
     }
 
     await enrollmentDelete.destroy({
       where: { id: enrollmentDelete },
     });
 
-    return res.json({ message: 'Enrollment deleted with success' });
+    return res.json({ message: 'Matricula apagada com sucesso' });
   }
 }
 
