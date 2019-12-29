@@ -18,27 +18,49 @@ import {
 import api from '~/services/api';
 
 function HelpOrder({ navigation, isFocused }) {
-  const [question, setQuestions] = useState([]);
   const { id } = useSelector(state => state.user);
+  const [question, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
 
-  async function loadCheckIns() {
-    const response = await api.get(`/students/${id}/help-orders`);
+  async function loadHelOrders(pageNumber = 1) {
+    setLoading(true);
 
-    const dataFormatted = response.data.map(item => ({
+    const response = await api.get(
+      `/students/${id}/help-orders?page=${pageNumber}`
+    );
+
+    const { docs, ...questionInfo } = response.data;
+
+    const dataFormatted = docs.map(item => ({
       ...item,
       createdAt: formatRelative(parseISO(item.createdAt), new Date(), {
         locale: pt,
       }),
     }));
 
-    setQuestions(dataFormatted);
+    setPagination(questionInfo);
+    setPage(pageNumber);
+    setQuestions(
+      pageNumber === 1 ? dataFormatted : [...question, ...dataFormatted]
+    );
+    setLoading(false);
   }
 
   useEffect(() => {
-    loadCheckIns();
+    loadHelOrders();
 
     // eslint-disable-next-line
   }, [isFocused]);
+
+  function loadMore() {
+    if (page === pagination.pages) return;
+
+    const pageNumber = page + 1;
+
+    loadHelOrders(pageNumber);
+  }
 
   return (
     <Container>
@@ -48,6 +70,10 @@ function HelpOrder({ navigation, isFocused }) {
 
       <List
         data={question}
+        onRefresh={() => loadHelOrders()}
+        refreshing={loading}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => (
           <ListContent

@@ -26,7 +26,8 @@ export const CheckInContent = styled.View`
   flex-direction: row;
   background: #fff;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 `;
 
 export const CheckInId = styled.Text`

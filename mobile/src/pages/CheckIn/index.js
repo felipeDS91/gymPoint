@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import { withNavigationFocus } from 'react-navigation';
 import { showMessage } from 'react-native-flash-message';
 import api from '~/services/api';
 
@@ -16,20 +15,34 @@ import {
 } from './styles';
 
 export default function CheckIn() {
-  const [checkins, setCheckins] = useState([]);
   const { id } = useSelector(state => state.user);
+  const [checkins, setCheckins] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
 
-  async function loadCheckIns() {
-    const response = await api.get(`/students/${id}/checkins`);
+  async function loadCheckIns(pageNumber = 1) {
+    setLoading(true);
 
-    const dataFormatted = response.data.map(item => ({
+    const response = await api.get(
+      `/students/${id}/checkins?page=${pageNumber}`
+    );
+
+    const { docs, ...chekinInfo } = response.data;
+
+    const dataFormatted = docs.map(item => ({
       id: item.id,
       createdAt: formatDistanceToNow(parseISO(item.createdAt), {
         locale: pt,
       }),
     }));
 
-    setCheckins(dataFormatted);
+    setPagination(chekinInfo);
+    setPage(pageNumber);
+    setCheckins(
+      pageNumber === 1 ? dataFormatted : [...checkins, ...dataFormatted]
+    );
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -57,11 +70,23 @@ export default function CheckIn() {
     loadCheckIns();
   }
 
+  function loadMore() {
+    if (page === pagination.pages) return;
+
+    const pageNumber = page + 1;
+
+    loadCheckIns(pageNumber);
+  }
+
   return (
     <Container>
       <CheckInButton onPress={handleCheckIn}>Novo check-in</CheckInButton>
       <List
         data={checkins}
+        onRefresh={() => loadCheckIns()}
+        refreshing={loading}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
         keyExtractor={item => String(item.id)}
         renderItem={({ item }) => (
           <CheckInContent>

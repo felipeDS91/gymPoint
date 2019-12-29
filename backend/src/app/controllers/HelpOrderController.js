@@ -1,6 +1,9 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import HelpOrder from '../models/HelpOrder';
 import Student from '../models/Student';
+
+const RES_PER_PAGE = 20;
 
 class HelpOrderController {
   async index(req, res) {
@@ -8,8 +11,8 @@ class HelpOrderController {
 
     const helpOrders = await HelpOrder.findAll({
       order: ['id'],
-      limit: 20,
-      offset: (page - 1) * 20,
+      limit: RES_PER_PAGE,
+      offset: (page - 1) * RES_PER_PAGE,
       where: { answer_at: null },
       include: [
         {
@@ -34,16 +37,26 @@ class HelpOrderController {
     }
 
     const { student_id } = req.params;
-    const { page = 1, q } = req.query;
+    const { page = 1 } = req.query;
 
     const helpOrder = await HelpOrder.findAll({
-      order: ['id'],
-      limit: 20,
-      offset: (page - 1) * 20,
+      order: [['id', 'DESC']],
+      limit: RES_PER_PAGE,
+      offset: (page - 1) * RES_PER_PAGE,
       where: { student_id },
     });
 
-    return res.json(helpOrder);
+    // Count how many rows were found
+    const helpOrderCount = await HelpOrder.count({ student_id });
+    const totalPages = Math.ceil(helpOrderCount / RES_PER_PAGE);
+
+    return res.json({
+      docs: helpOrder,
+      total: helpOrderCount,
+      limit: RES_PER_PAGE,
+      page,
+      pages: totalPages,
+    });
   }
 
   async store(req, res) {

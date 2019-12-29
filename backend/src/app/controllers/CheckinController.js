@@ -4,9 +4,12 @@ import { endOfDay, startOfDay, format, subDays, parseISO } from 'date-fns';
 import Checkin from '../models/Checkin';
 
 const CHECKINS_PER_WEEK = 5;
+const RES_PER_PAGE = 20;
 
 class CheckinController {
   async index(req, res) {
+    const { page = 1 } = req.query;
+
     const schema = Yup.object().shape({
       student_id: Yup.number().required(),
     });
@@ -17,9 +20,24 @@ class CheckinController {
 
     const { student_id } = req.params;
 
-    const checkins = await Checkin.findAll({ student_id });
+    const checkins = await Checkin.findAll({
+      order: [['id', 'DESC']],
+      limit: RES_PER_PAGE,
+      offset: (page - 1) * RES_PER_PAGE,
+      where: { student_id },
+    });
 
-    return res.json(checkins);
+    // Count how many rows were found
+    const checkinsCount = await Checkin.count({ student_id });
+    const totalPages = Math.ceil(checkinsCount / RES_PER_PAGE);
+
+    return res.json({
+      docs: checkins,
+      total: checkinsCount,
+      limit: RES_PER_PAGE,
+      page,
+      pages: totalPages,
+    });
   }
 
   async store(req, res) {
