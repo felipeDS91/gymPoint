@@ -4,6 +4,7 @@ import { format, parseISO, addMonths } from 'date-fns';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+import AsyncSelect from '~/components/AsyncSelect';
 import Select from '~/components/Select';
 import DatePicker from '~/components/DatePicker';
 
@@ -20,30 +21,34 @@ import {
 } from './styles';
 
 const schema = Yup.object().shape({
-  student_id: Yup.string().required('O aluno é obrigatório'),
+  student: Yup.object({
+    id: Yup.number().required(),
+    name: Yup.string().required(),
+  })
+    .nullable()
+    .required('Campo aluno obrigatório'),
   plan_id: Yup.string().required('O plano é obrigatório'),
-  start_date: Yup.date().required('A data é obrigatória'),
+  start_date: Yup.date()
+    .required('Campo data de início obrigatório')
+    .typeError('Campo data inválida'),
 });
 
 export default function FormStudent({ history, match }) {
   const { id } = match.params;
   const [editMode] = useState(typeof id !== 'undefined');
   const [enrollment, setEnrollment] = useState({});
-  const [students, setStudents] = useState([]);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  async function loadStudents() {
-    const response = await api.get(`/students`);
-    const { data } = response;
-
-    const dataFormatted = data.map(item => ({
-      id: item.id,
-      title: item.name,
-    }));
-
-    setStudents(dataFormatted);
-  }
+  const studentPromise = value =>
+    api
+      .get('/students', {
+        params: {
+          q: value,
+        },
+      })
+      .then(({ data }) => data)
+      .catch(() => []);
 
   async function loadPlans() {
     const response = await api.get(`/plans`);
@@ -60,7 +65,6 @@ export default function FormStudent({ history, match }) {
   }
 
   async function loadData() {
-    await loadStudents();
     await loadPlans();
 
     if (!editMode) {
@@ -91,11 +95,17 @@ export default function FormStudent({ history, match }) {
   }
 
   async function handleSubmit(data) {
+    const postData = {
+      student_id: data.student.id,
+      plan_id: data.plan_id,
+      start_date: data.start_date,
+    };
+
     try {
       if (editMode) {
-        await api.put(`enrollments/${id}`, data);
+        await api.put(`enrollments/${id}`, postData);
       } else {
-        await api.post('enrollments', data);
+        await api.post('enrollments', postData);
       }
 
       toast.success('Dados gravados com sucesso!');
@@ -153,11 +163,18 @@ export default function FormStudent({ history, match }) {
           schema={schema}
           onSubmit={handleSubmit}
         >
-          <Select
-            name="student_id"
+          <AsyncSelect
+            name="student"
             label="ALUNO"
-            placeholder="Buscar aluno"
-            options={students}
+            loadOptions={studentPromise}
+            placeholder="Selecione o aluno"
+            noOptionsMessage={() => 'Nenhum aluno encontrado'}
+            loadingMessage={() => 'Carregando...'}
+            getOptionLabel={option => option.name}
+            getOptionValue={option => option}
+            defaultOptions
+            onChange={value => setEnrollment({ ...enrollment, student: value })}
+            value={enrollment.student}
           />
 
           <Columns>
