@@ -41,8 +41,12 @@ export default function FormPlan({ match }) {
   }
 
   useEffect(() => {
-    setTotalPrice(formatPrice(plan.duration * plan.price));
-  }, [plan.duration, plan.price]);
+    setTotalPrice(
+      plan.duration > 0 && plan.price > 0
+        ? formatPrice(plan.duration * plan.price)
+        : ''
+    );
+  }, [editMode, plan.duration, plan.price]);
 
   /**
    * Fields with property "mask" were not working

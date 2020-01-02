@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { FiSearch } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 
 import { Loading } from '~/styles/Loading';
 import Pagination from '~/components/Pagination';
+import Search from '~/components/Search';
 import api from '~/services/api';
 import {
   Container,
   TitlePage,
   PageHeader,
   Options,
-  SearchInput,
   TableContent,
   ReplyButton,
   StyledModal,
@@ -22,8 +21,6 @@ import {
 const schema = Yup.object().shape({
   answer: Yup.string().required('A resposta é obrigatória'),
 });
-
-let searchTimeout = null;
 
 export default function ListHelpOrders() {
   const [loading, setLoading] = useState(true);
@@ -86,19 +83,6 @@ export default function ListHelpOrders() {
     }
   }
 
-  function handleSearch(e) {
-    const { value } = e.target;
-    setSearch(value);
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-    setLoading(true);
-    const timeout = setTimeout(async () => {
-      loadData(value);
-    }, 600);
-    searchTimeout = timeout;
-  }
-
   function handlePrev(page) {
     loadData(search, page);
   }
@@ -136,15 +120,11 @@ export default function ListHelpOrders() {
       <PageHeader>
         <TitlePage>Pedidos de auxílio</TitlePage>
         <Options>
-          <SearchInput>
-            <FiSearch size={16} color="#999" />
-            <input
-              type="text"
-              placeholder="Buscar aluno"
-              onChange={handleSearch}
-              value={search}
-            />
-          </SearchInput>
+          <Search
+            loadData={loadData}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </Options>
       </PageHeader>
       <TableContent>

@@ -7,7 +7,7 @@ import Student from '../models/Student';
 import EnrollmentMail from '../jobs/EnrollmentMail';
 import Queue from '../../lib/Queue';
 
-const RES_PER_PAGE = 20;
+const RES_PER_PAGE = 10;
 
 class EnrollmentController {
   async index(req, res) {

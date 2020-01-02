@@ -77,9 +77,11 @@ export default function AsyncSelect({
 AsyncSelect.propTypes = {
   name: propsTypes.string.isRequired,
   loadOptions: propsTypes.func.isRequired,
+  label: propsTypes.string,
   multiple: propsTypes.bool,
 };
 
 AsyncSelect.defaultProps = {
   multiple: false,
+  label: '',
 };

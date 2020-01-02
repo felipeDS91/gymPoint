@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 import HelpOrder from '../models/HelpOrder';
 import Student from '../models/Student';
 
-const RES_PER_PAGE = 20;
+const RES_PER_PAGE = 10;
 
 class HelpOrderController {
   async index(req, res) {

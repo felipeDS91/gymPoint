@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Plan from '../models/Plan';
 
-const RES_PER_PAGE = 20;
+const RES_PER_PAGE = 10;
 
 const schema = Yup.object().shape({
   title: Yup.string().required(),

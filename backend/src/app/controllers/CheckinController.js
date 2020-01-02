@@ -4,7 +4,7 @@ import { endOfDay, startOfDay, format, subDays, parseISO } from 'date-fns';
 import Checkin from '../models/Checkin';
 
 const CHECKINS_PER_WEEK = 5;
-const RES_PER_PAGE = 20;
+const RES_PER_PAGE = 10;
 
 class CheckinController {
   async index(req, res) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FiPlus, FiSearch } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import pt from 'date-fns/locale/pt';
@@ -7,6 +7,7 @@ import { format, parseISO } from 'date-fns';
 import { MdCheckCircle } from 'react-icons/md';
 
 import Pagination from '~/components/Pagination';
+import Search from '~/components/Search';
 import { Loading } from '~/styles/Loading';
 import api from '~/services/api';
 import {
@@ -14,13 +15,10 @@ import {
   TitlePage,
   PageHeader,
   Options,
-  SearchInput,
   TableContent,
   EditButton,
   RemoveButton,
 } from './styles';
-
-let searchTimeout = null;
 
 export default function ListEnrollment() {
   const [loading, setLoading] = useState(true);
@@ -84,19 +82,6 @@ export default function ListEnrollment() {
     }
   }
 
-  function handleSearch(e) {
-    const { value } = e.target;
-    setSearch(value);
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-    setLoading(true);
-    const timeout = setTimeout(async () => {
-      loadData(value);
-    }, 600);
-    searchTimeout = timeout;
-  }
-
   function handlePrev(page) {
     loadData(search, page);
   }
@@ -118,15 +103,11 @@ export default function ListEnrollment() {
             <FiPlus size={20} color="#FFF" />
             CADASTRAR
           </Link>
-          <SearchInput>
-            <FiSearch size={16} color="#999" />
-            <input
-              type="text"
-              placeholder="Buscar aluno"
-              onChange={handleSearch}
-              value={search}
-            />
-          </SearchInput>
+          <Search
+            loadData={loadData}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </Options>
       </PageHeader>
 

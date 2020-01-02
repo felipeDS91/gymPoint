@@ -12,7 +12,7 @@ const schema = Yup.object().shape({
   height: Yup.number().max(3),
 });
 
-const RES_PER_PAGE = 20;
+const RES_PER_PAGE = 10;
 
 class StudentController {
   async index(req, res) {
