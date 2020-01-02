@@ -35,7 +35,7 @@ class CheckinController {
       docs: checkins,
       total: checkinsCount,
       limit: RES_PER_PAGE,
-      page,
+      page: Number(page),
       pages: totalPages,
     });
   }

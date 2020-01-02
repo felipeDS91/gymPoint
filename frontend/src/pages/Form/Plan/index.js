@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack, IoIosCheckmark } from 'react-icons/io';
 import { Form } from '@rocketseat/unform';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-import Input from '~/components/Input';
 
+import history from '~/services/history';
+import Input from '~/components/Input';
 import { formatPrice } from '~/util/format';
 import api from '~/services/api';
 import {
@@ -24,7 +26,7 @@ const schema = Yup.object().shape({
   price: Yup.number().required('O valor é obrigatório'),
 });
 
-export default function FormPlan({ history, match }) {
+export default function FormPlan({ match }) {
   const { id } = match.params;
   const [editMode] = useState(typeof id !== 'undefined');
   const [plan, setPlan] = useState({});
@@ -63,7 +65,7 @@ export default function FormPlan({ history, match }) {
 
       toast.success('Dados gravados com sucesso!');
       history.push('/list-plans');
-    } catch (error) {      
+    } catch (error) {
       toast.error('Não foi possivel gravar os dados!');
     }
   }
@@ -143,3 +145,19 @@ export default function FormPlan({ history, match }) {
     </Container>
   );
 }
+
+FormPlan.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+  }),
+};
+
+FormPlan.defaultProps = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: null,
+    }),
+  }),
+};

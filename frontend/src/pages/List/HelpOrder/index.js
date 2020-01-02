@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 
+import { Loading } from '~/styles/Loading';
 import api from '~/services/api';
 import {
   Container,
@@ -22,18 +23,26 @@ const schema = Yup.object().shape({
 });
 
 export default function ListHelpOrders() {
+  const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [questionModal, setQuestionModal] = useState({});
 
-  function toggleModal(e) {
+  function toggleModal() {
     setIsOpen(!isOpen);
   }
 
   async function loadData(search) {
-    const response = await api.get('/help-orders', { params: { q: search } });
-    const { data } = response;
-    setQuestions(data);
+    setLoading(true);
+
+    try {
+      const response = await api.get('/help-orders', { params: { q: search } });
+      setQuestions(response.data);
+    } catch (error) {
+      setQuestions([]);
+    }
+
+    setLoading(false);
   }
 
   async function loadQuestion(question) {
@@ -68,12 +77,7 @@ export default function ListHelpOrders() {
       >
         <span>PERGUNTA DO ALUNO</span>
         <Question>{questionModal.question}</Question>
-        <Form
-          id="form"
-          // initialData={enrollment}
-          schema={schema}
-          onSubmit={handleSubmit}
-        >
+        <Form id="form" schema={schema} onSubmit={handleSubmit}>
           <Input
             label="SUA RESPOSTA"
             multiline
@@ -100,24 +104,38 @@ export default function ListHelpOrders() {
         </Options>
       </PageHeader>
       <TableContent>
-        <table>
-          <thead>
-            <tr>
-              <th width="600px">ALUNO</th>
-              <th width="30px" />
-            </tr>
-          </thead>
-          <tbody>
-            {questions.map(question => (
-              <tr key={question.id}>
-                <td>{question.student.name}</td>
-                <ReplyButton onClick={() => loadQuestion(question)}>
-                  responder
-                </ReplyButton>
+        {loading ? (
+          <center>
+            <Loading color="#666" />
+          </center>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th width="600px">ALUNO</th>
+                <th>&nbsp;</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {questions.length > 0 ? (
+                questions.map(question => (
+                  <tr key={question.id}>
+                    <td>{question.student.name}</td>
+                    <ReplyButton onClick={() => loadQuestion(question)}>
+                      responder
+                    </ReplyButton>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" align="center">
+                    Nenhum registro encontrado.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </TableContent>
     </Container>
   );

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack, IoIosCheckmark } from 'react-icons/io';
 import { Form } from '@rocketseat/unform';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
-import Input from '~/components/Input';
 
+import Input from '~/components/Input';
+import history from '~/services/history';
 import api from '~/services/api';
 import {
   Container,
@@ -25,7 +27,7 @@ const schema = Yup.object().shape({
   height: Yup.string().required('A altura é obrigatória'),
 });
 
-export default function FormStudent({ history, match }) {
+export default function FormStudent({ match }) {
   const { id } = match.params;
   const [editMode] = useState(typeof id !== 'undefined');
   const [student, setStudent] = useState({
@@ -154,3 +156,19 @@ export default function FormStudent({ history, match }) {
     </Container>
   );
 }
+
+FormStudent.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+  }),
+};
+
+FormStudent.defaultProps = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: null,
+    }),
+  }),
+};

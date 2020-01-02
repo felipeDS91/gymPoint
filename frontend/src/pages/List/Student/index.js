@@ -3,6 +3,7 @@ import { FiPlus, FiSearch } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { Loading } from '~/styles/Loading';
 import api from '~/services/api';
 import {
   Container,
@@ -16,14 +17,20 @@ import {
 } from './styles';
 
 export default function ListStudents() {
+  const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
 
   async function loadData(search) {
-    const response = await api.get('/students', { params: { q: search } });
+    setLoading(true);
 
-    const { data } = response;
+    try {
+      const response = await api.get('/students', { params: { q: search } });
+      setStudents(response.data);
+    } catch (error) {
+      setStudents([]);
+    }
 
-    setStudents(data);
+    setLoading(false);
   }
 
   async function deleteStudent({ id, name }) {
@@ -64,32 +71,49 @@ export default function ListStudents() {
       </PageHeader>
 
       <TableContent>
-        <table>
-          <thead>
-            <tr>
-              <th width="350px">NOME</th>
-              <th width="250px">E-MAIL</th>
-              <th width="50px">IDADE</th>
-              <th width="80px" />
-              <th width="80px" />
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(student => (
-              <tr key={student.id}>
-                <td>{student.name}</td>
-                <td>{student.email}</td>
-                <td align="center">{student.age}</td>
-                <td align="center">
-                  <EditButton to={`/student/${student.id}`}>editar</EditButton>
-                </td>
-                <RemoveButton onClick={() => deleteStudent(student)}>
-                  apagar
-                </RemoveButton>
+        {loading ? (
+          <center>
+            <Loading color="#666" />
+          </center>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th width="350px">NOME</th>
+                <th width="250px">E-MAIL</th>
+                <th align="center" width="100px">
+                  IDADE
+                </th>
+                <th>&nbsp;</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {students.length > 0 ? (
+                students.map(student => (
+                  <tr key={student.id}>
+                    <td>{student.name}</td>
+                    <td>{student.email}</td>
+                    <td align="center">{student.age}</td>
+                    <td align="center">
+                      <EditButton to={`/student/${student.id}`}>
+                        editar
+                      </EditButton>
+                    </td>
+                    <RemoveButton onClick={() => deleteStudent(student)}>
+                      apagar
+                    </RemoveButton>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" align="center">
+                    Nenhum registro encontrado.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </TableContent>
     </Container>
   );

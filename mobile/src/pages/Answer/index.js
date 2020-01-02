@@ -13,8 +13,6 @@ import {
 export default function Anwser({ navigation }) {
   const question = navigation.getParam('question');
 
-  console.tron.log(question);
-
   const dateParsed = useMemo(() => {
     if (question.answer_at)
       return formatRelative(parseISO(question.answer_at), new Date(), {

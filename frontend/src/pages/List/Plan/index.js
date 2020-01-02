@@ -3,6 +3,7 @@ import { FiPlus, FiSearch } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+import { Loading } from '~/styles/Loading';
 import { formatPrice } from '~/util/format';
 import api from '~/services/api';
 import {
@@ -17,20 +18,27 @@ import {
 } from './styles';
 
 export default function ListPlans() {
+  const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState([]);
 
   async function loadData(search) {
-    const response = await api.get('/plans', { params: { q: search } });
+    setLoading(true);
 
-    const { data } = response;
+    try {
+      const response = await api.get('/plans', { params: { q: search } });
 
-    const dataFormatted = data.map(item => ({
-      ...item,
-      duration: `${item.duration} mês${item.duration > 1 ? 'es' : ''}`,
-      price: formatPrice(item.price),
-    }));
+      const dataFormatted = response.data.map(item => ({
+        ...item,
+        duration: `${item.duration} mês${item.duration > 1 ? 'es' : ''}`,
+        price: formatPrice(item.price),
+      }));
 
-    setPlans(dataFormatted);
+      setPlans(dataFormatted);
+    } catch (error) {
+      setPlans([]);
+    }
+
+    setLoading(false);
   }
 
   async function deletePlan({ id, title }) {
@@ -71,32 +79,45 @@ export default function ListPlans() {
       </PageHeader>
 
       <TableContent>
-        <table>
-          <thead>
-            <tr>
-              <th width="350px">TÍTULO</th>
-              <th width="250px">DURAÇÃO</th>
-              <th width="200px">VALOR p/ MÊS</th>
-              <th width="80px" />
-              <th width="80px" />
-            </tr>
-          </thead>
-          <tbody>
-            {plans.map(plan => (
-              <tr key={plan.id}>
-                <td>{plan.title}</td>
-                <td>{plan.duration}</td>
-                <td align="center">{plan.price}</td>
-                <td align="center">
-                  <EditButton to={`/plan/${plan.id}`}>editar</EditButton>
-                </td>
-                <RemoveButton onClick={() => deletePlan(plan)}>
-                  apagar
-                </RemoveButton>
+        {loading ? (
+          <center>
+            <Loading color="#666" />
+          </center>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th width="350px">TÍTULO</th>
+                <th width="250px">DURAÇÃO</th>
+                <th width="200px">VALOR p/ MÊS</th>
+                <th>&nbsp;</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {plans.length > 0 ? (
+                plans.map(plan => (
+                  <tr key={plan.id}>
+                    <td>{plan.title}</td>
+                    <td>{plan.duration}</td>
+                    <td align="center">{plan.price}</td>
+                    <td align="center">
+                      <EditButton to={`/plan/${plan.id}`}>editar</EditButton>
+                    </td>
+                    <RemoveButton onClick={() => deletePlan(plan)}>
+                      apagar
+                    </RemoveButton>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" align="center">
+                    Nenhum registro encontrado.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </TableContent>
     </Container>
   );

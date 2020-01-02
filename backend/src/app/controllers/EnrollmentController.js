@@ -7,14 +7,16 @@ import Student from '../models/Student';
 import EnrollmentMail from '../jobs/EnrollmentMail';
 import Queue from '../../lib/Queue';
 
+const RES_PER_PAGE = 20;
+
 class EnrollmentController {
   async index(req, res) {
     const { page = 1, q } = req.query;
 
     const enrollments = await Enrollment.findAll({
       order: ['id'],
-      limit: 20,
-      offset: (page - 1) * 20,
+      limit: RES_PER_PAGE,
+      offset: (page - 1) * RES_PER_PAGE,
       attributes: ['id', 'start_date', 'end_date', 'price', 'active'],
       include: [
         {
@@ -31,7 +33,17 @@ class EnrollmentController {
       ],
     });
 
-    return res.json(enrollments);
+    // Count how many rows were found
+    const enrollmentsCount = await Enrollment.count();
+    const totalPages = Math.ceil(enrollmentsCount / RES_PER_PAGE);
+
+    return res.json({
+      docs: enrollments,
+      total: enrollmentsCount,
+      limit: RES_PER_PAGE,
+      page: Number(page),
+      pages: totalPages,
+    });
   }
 
   async show(req, res) {
@@ -81,7 +93,7 @@ class EnrollmentController {
     /* verify if dates is before (valid)  */
     if (isBefore(startDate, new Date())) {
       return res.status(400).json({
-        error: 'Data no passado não são permitidas',
+        error: 'Data no passado não é permitido',
       });
     }
 
@@ -96,7 +108,7 @@ class EnrollmentController {
     if (checkEnrollment) {
       return res
         .status(401)
-        .json({ error: 'Matricula não se encontra disponível' });
+        .json({ error: 'Matrícula não se encontra disponível' });
     }
 
     const plan = await Plan.findOne({
@@ -160,7 +172,7 @@ class EnrollmentController {
     });
 
     if (!checkEnrolls) {
-      return res.status(401).json({ error: "Student doesn't has a valid id" });
+      return res.status(401).json({ error: 'Aluno não possui uma id válida' });
     }
 
     const startDate = parseISO(req.body.start_date);
@@ -168,7 +180,7 @@ class EnrollmentController {
     /* verify if dates is before (valid)  */
     if (isBefore(startDate, new Date())) {
       return res.status(400).json({
-        error: 'past dates are not permitted',
+        error: 'Data no passado não é permitido',
       });
     }
 

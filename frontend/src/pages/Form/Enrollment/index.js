@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack, IoIosCheckmark } from 'react-icons/io';
 import { format, parseISO, addMonths } from 'date-fns';
+import PropTypes from 'prop-types';
 import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
+import history from '~/services/history';
 import AsyncSelect from '~/components/AsyncSelect';
 import Select from '~/components/Select';
 import DatePicker from '~/components/DatePicker';
@@ -33,7 +35,7 @@ const schema = Yup.object().shape({
     .typeError('Campo data inválida'),
 });
 
-export default function FormStudent({ history, match }) {
+export default function FormEnrollment({ match }) {
   const { id } = match.params;
   const [editMode] = useState(typeof id !== 'undefined');
   const [enrollment, setEnrollment] = useState({});
@@ -135,7 +137,7 @@ export default function FormStudent({ history, match }) {
         price_total: plan.price_total,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [enrollment.plan_id, enrollment.start_date]);
 
   return (
@@ -168,11 +170,6 @@ export default function FormStudent({ history, match }) {
             label="ALUNO"
             loadOptions={studentPromise}
             placeholder="Selecione o aluno"
-            noOptionsMessage={() => 'Nenhum aluno encontrado'}
-            loadingMessage={() => 'Carregando...'}
-            getOptionLabel={option => option.name}
-            getOptionValue={option => option}
-            defaultOptions
             onChange={value => setEnrollment({ ...enrollment, student: value })}
             value={enrollment.student}
           />
@@ -227,3 +224,19 @@ export default function FormStudent({ history, match }) {
     </Container>
   );
 }
+
+FormEnrollment.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string,
+    }),
+  }),
+};
+
+FormEnrollment.defaultProps = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: null,
+    }),
+  }),
+};

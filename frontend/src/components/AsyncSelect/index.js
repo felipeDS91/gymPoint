@@ -61,6 +61,11 @@ export default function AsyncSelect({
         loadOptions={loadOptions}
         isMulti={multiple}
         ref={ref}
+        getOptionLabel={option => option.name}
+        getOptionValue={option => option}
+        defaultOptions
+        noOptionsMessage={() => 'Nenhum aluno encontrado'}
+        loadingMessage={() => 'Carregando...'}
         styles={customStyle()}
         {...rest}
       />

@@ -54,7 +54,7 @@ class HelpOrderController {
       docs: helpOrder,
       total: helpOrderCount,
       limit: RES_PER_PAGE,
-      page,
+      page: Number(page),
       pages: totalPages,
     });
   }
