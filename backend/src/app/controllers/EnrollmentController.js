@@ -34,7 +34,15 @@ class EnrollmentController {
     });
 
     // Count how many rows were found
-    const enrollmentsCount = await Enrollment.count();
+    const enrollmentsCount = await Enrollment.count({
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          where: q && { name: { [Op.iLike]: `%${q}%` } },
+        },
+      ],
+    });
     const totalPages = Math.ceil(enrollmentsCount / RES_PER_PAGE);
 
     return res.json({

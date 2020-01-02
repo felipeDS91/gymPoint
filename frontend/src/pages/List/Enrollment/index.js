@@ -20,8 +20,11 @@ import {
   RemoveButton,
 } from './styles';
 
+let searchTimeout = null;
+
 export default function ListEnrollment() {
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
   const [enrollments, setEnrollments] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -29,14 +32,14 @@ export default function ListEnrollment() {
     total: 0,
   });
 
-  async function loadData(search, pageNumber = 1) {
+  async function loadData(searchBy, pageNumber = 1) {
     setLoading(true);
 
     try {
       const { data } = await api.get('/enrollments', {
         params: {
           page: pageNumber,
-          q: search,
+          q: searchBy,
         },
       });
 
@@ -55,12 +58,12 @@ export default function ListEnrollment() {
       setEnrollments(dataFormatted);
       setPagination(info);
     } catch (error) {
+      setEnrollments([]);
       setPagination({
         page: 1,
         pages: 1,
         total: 0,
       });
-      setEnrollments([]);
     }
 
     setLoading(false);
@@ -81,12 +84,25 @@ export default function ListEnrollment() {
     }
   }
 
+  function handleSearch(e) {
+    const { value } = e.target;
+    setSearch(value);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    setLoading(true);
+    const timeout = setTimeout(async () => {
+      loadData(value);
+    }, 600);
+    searchTimeout = timeout;
+  }
+
   function handlePrev(page) {
-    loadData(null, page);
+    loadData(search, page);
   }
 
   function handleNext(page) {
-    loadData(null, page);
+    loadData(search, page);
   }
 
   useEffect(() => {
@@ -107,7 +123,8 @@ export default function ListEnrollment() {
             <input
               type="text"
               placeholder="Buscar aluno"
-              onChange={e => loadData(e.target.value)}
+              onChange={handleSearch}
+              value={search}
             />
           </SearchInput>
         </Options>
@@ -172,16 +189,13 @@ export default function ListEnrollment() {
                 )}
               </tbody>
             </table>
-
-            <div className="text-right">
-              <Pagination
-                page={pagination.page}
-                pages={pagination.pages}
-                total={pagination.total}
-                handleNext={handleNext}
-                handlePrev={handlePrev}
-              />
-            </div>
+            <Pagination
+              page={pagination.page}
+              pages={pagination.pages}
+              total={pagination.total}
+              handleNext={handleNext}
+              handlePrev={handlePrev}
+            />
           </>
         )}
       </TableContent>

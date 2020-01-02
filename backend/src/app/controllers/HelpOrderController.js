@@ -24,7 +24,26 @@ class HelpOrderController {
       ],
     });
 
-    return res.json(helpOrders);
+    // Count how many rows were found
+    const helpOrderCount = await HelpOrder.count({
+      where: { answer_at: null },
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          where: q && { name: { [Op.iLike]: `%${q}%` } },
+        },
+      ],
+    });
+    const totalPages = Math.ceil(helpOrderCount / RES_PER_PAGE);
+
+    return res.json({
+      docs: helpOrders,
+      total: helpOrderCount,
+      limit: RES_PER_PAGE,
+      page: Number(page),
+      pages: totalPages,
+    });
   }
 
   async show(req, res) {

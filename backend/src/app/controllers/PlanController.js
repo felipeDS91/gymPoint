@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Plan from '../models/Plan';
 
+const RES_PER_PAGE = 20;
+
 const schema = Yup.object().shape({
   title: Yup.string().required(),
   duration: Yup.number().required(),
@@ -15,11 +17,23 @@ class PlanController {
     const plans = await Plan.findAll({
       where: q && { title: { [Op.iLike]: `%${q}%` } },
       order: ['id'],
-      limit: 20,
-      offset: (page - 1) * 20,
+      limit: RES_PER_PAGE,
+      offset: (page - 1) * RES_PER_PAGE,
     });
 
-    return res.json(plans);
+    // Count how many rows were found
+    const plansCount = await Plan.count({
+      where: q && { title: { [Op.iLike]: `%${q}%` } },
+    });
+    const totalPages = Math.ceil(plansCount / RES_PER_PAGE);
+
+    return res.json({
+      docs: plans,
+      total: plansCount,
+      limit: RES_PER_PAGE,
+      page: Number(page),
+      pages: totalPages,
+    });
   }
 
   async show(req, res) {

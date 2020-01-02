@@ -12,6 +12,8 @@ const schema = Yup.object().shape({
   height: Yup.number().max(3),
 });
 
+const RES_PER_PAGE = 20;
+
 class StudentController {
   async index(req, res) {
     const { page = 1, q } = req.query;
@@ -19,11 +21,23 @@ class StudentController {
     const students = await Student.findAll({
       where: q && { name: { [Op.iLike]: `%${q}%` } },
       order: ['id'],
-      limit: 20,
-      offset: (page - 1) * 20,
+      limit: RES_PER_PAGE,
+      offset: (page - 1) * RES_PER_PAGE,
     });
 
-    return res.json(students);
+    // Count how many rows were found
+    const studentsCount = await Student.count({
+      where: q && { name: { [Op.iLike]: `%${q}%` } },
+    });
+    const totalPages = Math.ceil(studentsCount / RES_PER_PAGE);
+
+    return res.json({
+      docs: students,
+      total: studentsCount,
+      limit: RES_PER_PAGE,
+      page: Number(page),
+      pages: totalPages,
+    });
   }
 
   async show(req, res) {

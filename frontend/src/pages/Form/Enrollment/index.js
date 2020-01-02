@@ -49,14 +49,14 @@ export default function FormEnrollment({ match }) {
           q: value,
         },
       })
-      .then(({ data }) => data)
+      .then(({ data }) => data.docs)
       .catch(() => []);
 
   async function loadPlans() {
     const response = await api.get(`/plans`);
     const { data } = response;
 
-    const dataFormatted = data.map(item => ({
+    const dataFormatted = data.docs.map(item => ({
       id: item.id,
       title: item.title,
       price_total: formatPrice(item.duration * item.price),

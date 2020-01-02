@@ -5,6 +5,7 @@ import { Form, Input } from '@rocketseat/unform';
 import * as Yup from 'yup';
 
 import { Loading } from '~/styles/Loading';
+import Pagination from '~/components/Pagination';
 import api from '~/services/api';
 import {
   Container,
@@ -22,26 +23,47 @@ const schema = Yup.object().shape({
   answer: Yup.string().required('A resposta é obrigatória'),
 });
 
+let searchTimeout = null;
+
 export default function ListHelpOrders() {
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
   const [questions, setQuestions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [questionModal, setQuestionModal] = useState({});
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pages: 1,
+    total: 0,
+  });
 
   function toggleModal() {
     setIsOpen(!isOpen);
   }
 
-  async function loadData(search) {
+  async function loadData(searchBy, pageNumber = 1) {
     setLoading(true);
 
     try {
-      const response = await api.get('/help-orders', { params: { q: search } });
-      setQuestions(response.data);
+      const { data } = await api.get('/help-orders', {
+        params: {
+          page: pageNumber,
+          q: searchBy,
+        },
+      });
+
+      const { docs, ...info } = data;
+
+      setQuestions(docs);
+      setPagination(info);
     } catch (error) {
       setQuestions([]);
+      setPagination({
+        page: 1,
+        pages: 1,
+        total: 0,
+      });
     }
-
     setLoading(false);
   }
 
@@ -62,6 +84,27 @@ export default function ListHelpOrders() {
         response.data.error || 'Não foi possivel responder a pergunta!'
       );
     }
+  }
+
+  function handleSearch(e) {
+    const { value } = e.target;
+    setSearch(value);
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    setLoading(true);
+    const timeout = setTimeout(async () => {
+      loadData(value);
+    }, 600);
+    searchTimeout = timeout;
+  }
+
+  function handlePrev(page) {
+    loadData(search, page);
+  }
+
+  function handleNext(page) {
+    loadData(search, page);
   }
 
   useEffect(() => {
@@ -98,7 +141,8 @@ export default function ListHelpOrders() {
             <input
               type="text"
               placeholder="Buscar aluno"
-              onChange={e => loadData(e.target.value)}
+              onChange={handleSearch}
+              value={search}
             />
           </SearchInput>
         </Options>
@@ -109,32 +153,41 @@ export default function ListHelpOrders() {
             <Loading color="#666" />
           </center>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th width="600px">ALUNO</th>
-                <th>&nbsp;</th>
-              </tr>
-            </thead>
-            <tbody>
-              {questions.length > 0 ? (
-                questions.map(question => (
-                  <tr key={question.id}>
-                    <td>{question.student.name}</td>
-                    <ReplyButton onClick={() => loadQuestion(question)}>
-                      responder
-                    </ReplyButton>
-                  </tr>
-                ))
-              ) : (
+          <>
+            <table>
+              <thead>
                 <tr>
-                  <td colSpan="4" align="center">
-                    Nenhum registro encontrado.
-                  </td>
+                  <th width="600px">ALUNO</th>
+                  <th>&nbsp;</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {questions.length > 0 ? (
+                  questions.map(question => (
+                    <tr key={question.id}>
+                      <td>{question.student.name}</td>
+                      <ReplyButton onClick={() => loadQuestion(question)}>
+                        responder
+                      </ReplyButton>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" align="center">
+                      Nenhum registro encontrado.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <Pagination
+              page={pagination.page}
+              pages={pagination.pages}
+              total={pagination.total}
+              handleNext={handleNext}
+              handlePrev={handlePrev}
+            />
+          </>
         )}
       </TableContent>
     </Container>

@@ -10,7 +10,6 @@ function customStyle(additionalStyle) {
       ...provided,
       height: 36,
       fontSize: '15px',
-      color: 'red',
       cursor: 'pointer',
       ...additionalStyle,
     }),
