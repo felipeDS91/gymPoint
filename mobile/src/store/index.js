@@ -1,5 +1,6 @@
 import { persistStore } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
+import Config from 'react-native-config';
 
 import createStore from './createStore';
 import persistedReducers from './persistReducers';
@@ -7,7 +8,8 @@ import persistedReducers from './persistReducers';
 import rootReducer from './modules/rootReducer';
 import rootSaga from './modules/rootSaga';
 
-const sagaMonitor = __DEV__ ? console.tron.createSagaMonitor() : null;
+const sagaMonitor =
+  Config.APP_ENV === 'DEV' ? console.tron.createSagaMonitor() : null;
 
 const sagaMiddleware = createSagaMiddleware({ sagaMonitor });
 
