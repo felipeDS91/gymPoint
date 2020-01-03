@@ -6,7 +6,6 @@ networks:
 
 volumes:
   postgre-data:
-  mongo-data:
 
 services: 
   postgre:
@@ -18,14 +17,6 @@ services:
       - ./docker/postgresql/dumps/create-database.sql:/docker-entrypoint-initdb.d/create-database.sql
     ports:
       - "5432:5432"
-  mongo:
-    image: mongo
-    networks:
-      - gympoint
-    ports:
-      - "27017:27017"
-    volumes:
-      - "mongo-data:/data/db"
   redis:
     image: redis:alpine    
     networks:
@@ -42,10 +33,9 @@ services:
     ports:
       - "3333:3333"
     depends_on: 
-      - postgre
-      - mongo
+      - postgre      
       - redis
-    command: bash -c "yarn && yarn dev"
+    command: bash -c "yarn && yarn dev && yarn queue"
   frontend:
     image: node:10
     working_dir: /home/node/app
