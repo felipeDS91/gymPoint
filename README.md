@@ -13,7 +13,7 @@ Portanto, esse projeto é composto de 2 aplicações uma web (frontend) e uma ap
 
 **Aplicação Web**: É a aplicação para administração da academia, onde o usuário pode cadastrar novos alunos, planos e gerenciar matriculas e pedidos de auxílio.
 <h1 align="center">
-  <img alt="Gympoint WEB" title="GympointWEB" src=".github/web.png" width="600px" />
+  <img alt="Gympoint WEB" title="GympointWEB" src=".github/frontend.png" width="600px" />
 </h1>
 
 **Aplicação Mobile**: É uma aplicativo voltado para os usuários da academia, onde o aluno pode realizar checkin e realizar um pedido de auxílio.
