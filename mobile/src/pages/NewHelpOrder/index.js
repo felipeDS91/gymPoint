@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
+import PropTypes from 'prop-types';
 import { Container, FormInput, SendButtom } from './styles';
 import api from '~/services/api';
 
@@ -39,3 +40,9 @@ export default function NewHelpOrder({ navigation }) {
     </Container>
   );
 }
+
+NewHelpOrder.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};

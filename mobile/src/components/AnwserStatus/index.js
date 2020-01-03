@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import PropTypes from 'prop-types';
 import { Container, Status } from './styles';
 
 export default function AnwserStatus({ anwsered }) {
@@ -14,3 +14,11 @@ export default function AnwserStatus({ anwsered }) {
     </Container>
   );
 }
+
+AnwserStatus.propTypes = {
+  anwsered: PropTypes.bool,
+};
+
+AnwserStatus.defaultProps = {
+  anwsered: false,
+};

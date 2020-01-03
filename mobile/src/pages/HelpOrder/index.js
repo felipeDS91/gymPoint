@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { withNavigationFocus } from 'react-navigation';
 import { formatRelative, parseISO } from 'date-fns';
+import PropTypes from 'prop-types';
 import pt from 'date-fns/locale/pt';
 
 import AnwserStatus from '~/components/AnwserStatus';
@@ -90,5 +91,16 @@ function HelpOrder({ navigation, isFocused }) {
     </Container>
   );
 }
+
+HelpOrder.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+  isFocused: PropTypes.bool,
+};
+
+HelpOrder.defaultProps = {
+  isFocused: false,
+};
 
 export default withNavigationFocus(HelpOrder);

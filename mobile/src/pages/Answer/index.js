@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { formatRelative, parseISO } from 'date-fns';
+import PropTypes from 'prop-types';
 import pt from 'date-fns/locale/pt';
 import {
   Container,
@@ -10,7 +11,7 @@ import {
   Card,
 } from './styles';
 
-export default function Anwser({ navigation }) {
+export default function Answer({ navigation }) {
   const question = navigation.getParam('question');
 
   const dateParsed = useMemo(() => {
@@ -38,3 +39,9 @@ export default function Anwser({ navigation }) {
     </Container>
   );
 }
+
+Answer.propTypes = {
+  navigation: PropTypes.shape({
+    getParam: PropTypes.func,
+  }).isRequired,
+};
