@@ -16,9 +16,9 @@ export default function AnwserStatus({ anwsered }) {
 }
 
 AnwserStatus.propTypes = {
-  anwsered: PropTypes.bool,
+  anwsered: PropTypes.string,
 };
 
 AnwserStatus.defaultProps = {
-  anwsered: false,
+  anwsered: null,
 };
