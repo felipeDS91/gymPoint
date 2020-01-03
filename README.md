@@ -45,7 +45,7 @@ Portanto, esse projeto é composto de 2 aplicações uma web (frontend) e uma ap
 
 ### 1 Configuração de ambiente
 
-- Copiar o arquivo **frontend/.env.example** para **frontend/.env** e configurar as variáveis de ambiente relacionadas ao serviço de e-mail(MAIL_USER, MAIL_PASS) e o [Sentry](https://sentry.io/welcome/)(SENTRY_DSN).
+- Copiar o arquivo **backend/.env.example** para **backend/.env** e configurar as variáveis de ambiente relacionadas ao serviço de e-mail(MAIL_USER, MAIL_PASS) e o [Sentry](https://sentry.io/welcome/)(SENTRY_DSN).
 
 - Copiar o arquivo **frontend/.env.example** para **frontend/.env**
 - Copiar o arquivo **mobile/.env.example** para **mobile/.env**
