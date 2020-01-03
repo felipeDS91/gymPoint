@@ -1,0 +1,60 @@
+version: '3'
+
+networks:
+  gympoint: 
+    driver: bridge
+
+volumes:
+  postgre-data:
+  mongo-data:
+
+services: 
+  postgre:
+    image: postgres:11
+    networks:
+      - gympoint
+    volumes:
+      - postgre-data:/var/lib/postgresql/data      
+      - ./docker/postgresql/dumps/create-database.sql:/docker-entrypoint-initdb.d/create-database.sql
+    ports:
+      - "5432:5432"
+  mongo:
+    image: mongo
+    networks:
+      - gympoint
+    ports:
+      - "27017:27017"
+    volumes:
+      - "mongo-data:/data/db"
+  redis:
+    image: redis:alpine    
+    networks:
+      - gympoint
+    ports:
+      - "6379:6379"
+  backend:
+    image: node:10
+    working_dir: /home/node/app
+    networks:
+      - gympoint
+    volumes:
+      - ./backend:/home/node/app
+    ports:
+      - "3333:3333"
+    depends_on: 
+      - postgre
+      - mongo
+      - redis
+    command: bash -c "yarn && yarn dev"
+  frontend:
+    image: node:10
+    working_dir: /home/node/app
+    networks:
+      - gympoint
+    volumes:
+      - ./frontend:/home/node/app
+    ports:
+      - "3000:3000"
+    depends_on: 
+      - backend
+    command: bash -c "yarn && yarn start"
