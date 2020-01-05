@@ -35,7 +35,7 @@ services:
     depends_on: 
       - postgre      
       - redis
-    command: bash -c "yarn && yarn dev && yarn queue"
+    command: bash -c "yarn && yarn start"
   frontend:
     image: node:10
     working_dir: /home/node/app

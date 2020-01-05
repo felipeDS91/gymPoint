@@ -33,6 +33,8 @@ export default function FormPlan({ match }) {
   const [totalPrice, setTotalPrice] = useState(null);
 
   async function loadData() {
+    if (!editMode) return;
+
     const response = await api.get(`/plans/${id}`);
 
     const { data } = response;

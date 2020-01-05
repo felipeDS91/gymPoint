@@ -39,6 +39,8 @@ export default function FormStudent({ match }) {
   });
 
   async function loadData() {
+    if (!editMode) return;
+
     const response = await api.get(`/students/${id}`);
 
     const { data } = response;
